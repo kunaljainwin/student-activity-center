@@ -8,13 +8,14 @@ import 'package:flutter_countdown_timer/countdown.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:get/get.dart';
 import 'package:samadhyan/constants.dart';
-import 'package:samadhyan/Services/mongo.dart';
+import 'package:samadhyan/services/mongo.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
 import 'package:samadhyan/Services/QR/mobile_scanner.dart';
 
 class EventDetails extends StatelessWidget {
   const EventDetails({super.key, required this.event});
   final DocumentSnapshot event;
+
   @override
   Widget build(BuildContext context) {
     // final notes = List<Widget>.generate(event['note'].length,
@@ -26,7 +27,14 @@ class EventDetails extends StatelessWidget {
         padding: EdgeInsets.all(8),
         children: [
           getAppBarUI(context),
-
+          FutureBuilder(
+              future: MongoDB.getData(event.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(snapshot.data.toString());
+                }
+                return Text("Loading");
+              }),
           Stack(
             children: <Widget>[
               Container(

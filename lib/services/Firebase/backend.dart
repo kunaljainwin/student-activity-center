@@ -75,7 +75,8 @@ class AddUser {
           'home': userLocation,
           'registerations': 0,
           'attendance': 0,
-          'imageurl': useR.photoURL ?? "",
+          'imageurl': useR.photoURL ??
+              "https://firebasestorage.googleapis.com/v0/b/visitcounter-fef16.appspot.com/o/new-1363.svg?alt=media&token=a93a0423-967b-43dc-9ac6-47155a67d5cf",
           'id': useR.uid,
           "dateofbirth": t,
           'firsttime': t,

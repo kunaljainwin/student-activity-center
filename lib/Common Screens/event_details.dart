@@ -397,10 +397,22 @@ class EventDetails extends StatelessWidget {
   }
 
   Future handleRegisterNow(Map<String, dynamic> data) async {
-    // await MongoDB.insertData(data);
+    await MongoDB.insertData({
+      "_id": event.id,
+      "name": event['title'],
+      "timestamp": DateTime.now(),
+      "registered": [
+        {
+          "name": data['name'],
+          "email": data['email'],
+          "phone": data['phone'],
+        }
+      ],
+    });
     await event.reference.update({
       "registered": FieldValue.arrayUnion([userEmail])
     });
+    userSnapshot.reference.update({'registerations': FieldValue.increment(1)});
     Get.back();
   }
 

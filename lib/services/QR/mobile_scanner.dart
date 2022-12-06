@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:samadhyan/constants.dart';
 import 'package:samadhyan/Services/mongo.dart';
+import 'package:samadhyan/widgets/login_helpers.dart';
 
 class Scanner extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
@@ -131,15 +132,19 @@ class _ScannerState extends State<Scanner> {
                           .toDate()
                           .compareTo(DateTime.now()) >
                       0) {
-                // await MongoDB.insertData({
-                //   // Need to code here to insert data into the database
-                // });
+                MongoDB.insertData({
+                  '_id': widget.documentSnapshot.id,
+                  'attendees': FieldValue.arrayUnion([result.rawValue]),
+                  // Need to code here to insert data into the database
+                });
                 await widget.documentSnapshot.reference.update(
                   {
                     // 'registered': FieldValue.arrayRemove([userEmail]),
                     'attendees': FieldValue.arrayUnion([result.rawValue]),
                   },
                 );
+                userSnapshot.reference
+                    .update({'attendance': FieldValue.increment(1)});
                 Fluttertoast.showToast(
                     backgroundColor: Colors.green,
                     msg: 'Marked his attendance');

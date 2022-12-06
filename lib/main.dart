@@ -57,8 +57,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  await Firebase.initializeApp();
   await MongoDB.connect();
+  await Firebase.initializeApp();
+
   kIsWeb ? null : FirebaseMessaging.onBackgroundMessage(_messageHandler);
   runApp(const MyApp());
   // Processing of Push Notifications
