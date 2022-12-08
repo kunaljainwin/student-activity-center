@@ -19,7 +19,7 @@
 </p>
 
 
-#  [Playstore App link](https://drive.google.com/file/d/1nGWsXw69W-nzGJI8fhhkfcJb0dM5LCTr/view?usp=sharing)
+#  [App link](https://drive.google.com/file/d/1nGWsXw69W-nzGJI8fhhkfcJb0dM5LCTr/view?usp=sharing)
 
 ## 📝 Table of Contents
 - [Problem Statement](#problem_statement)
