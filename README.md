@@ -108,6 +108,7 @@ until finished
 Add notes about how to use the system. -->
 
 # Screenshots <a name="ss"><a/>
+  
 <table>
   <tr>
     <td>  Login Screen</td>
@@ -139,9 +140,8 @@ Add notes about how to use the system. -->
      
   </tr>
   <tr>
-
-    <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rmydiyr6qd8fr99z73df.png" ></td>
-<td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/he4kmpvrlera1lhfdkc7.jpeg" ></td>
+<td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rmydiyr6qd8fr99z73df.png"></td>
+<td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/he4kmpvrlera1lhfdkc7.jpeg"></td>
 
   </tr>
  </table>
@@ -154,19 +154,14 @@ Add notes about how to use the system. -->
 ## ✍️ Authors <a name = "authors"></a>
 - [@kunal jain](https://github.com/kunaljainwin) - Idea & Initial work
 
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) 
-who participated in this project.
+<!-- See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) 
+who participated in this project. -->
 
 ## 🎉 Acknowledgments <a name = "acknowledgments"></a>
 - Hat tip to anyone whose code was used
 - Gratitude to All who supported
 - References
   
-
-<!-- ## News -->
-<!-- ## Success stories -->
-
-
 ---
 
 
