@@ -141,7 +141,7 @@ Add notes about how to use the system. -->
   <tr>
 
     <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rmydiyr6qd8fr99z73df.png" ></td>
-<td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/he4kmpvrlera1lhfdkc7.jpeg" w></td>
+<td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/he4kmpvrlera1lhfdkc7.jpeg" ></td>
 
   </tr>
  </table>
