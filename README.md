@@ -1,8 +1,8 @@
-# visitcounter
+# RTU Events
 
 A Better approach of showing your presence.
 
-#  [Playstore App link](starflix-movies-5a210.firebaseapp.com)
+#  [Playstore App link](https://drive.google.com/file/d/1nGWsXw69W-nzGJI8fhhkfcJb0dM5LCTr/view?usp=sharing)
 
 ## Vision
 `Problem` : Unmanaged sytstem of marking someone's presence whether its in Events or in Classrooms
@@ -30,7 +30,7 @@ A Better approach of showing your presence.
 
 
 ## Project overview
-*Under construction*😂
+*Under construction*
 
 ## System Requirements
 `To use app` : Currently only available for Android devices.
@@ -41,13 +41,13 @@ A Better approach of showing your presence.
 ```rultimatrix@gmail.com```   (Kunal jain)
 
 ## User manual
-*Under construction*😂
+*Under construction*
                
   # 💗💗 `Would push your pulls and love to hear from you`  💗💗
     
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="https://i.imgur.com/6wj0hh6.jpg" alt="Project logo"></a>
+ <img width=200px height=200px src="https://res.cloudinary.com/practicaldev/image/fetch/s--s2W_wOlh--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/x0qr696jvvbnbexqpoj1.png" alt="Project logo"></a>
 </p>
 
 <h3 align="center">Project Title</h3>
