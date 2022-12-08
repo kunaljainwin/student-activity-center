@@ -25,8 +25,9 @@
 - [Problem Statement](#problem_statement)
 - [Idea / Solution](#idea)
 - [Description](#description)
+- [Screenshots](#ss)
 - [Benefits](#benefits)
-- [System Requirements](#srs)
+- [System Requirements](#system)
 - [Technology Stack](#tech_stack)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgments)
@@ -58,7 +59,7 @@
 
 
 
-## System Requirements <a name="srs"></a>
+## System Requirements <a name="system"></a>
 `To use app` : Currently only available for Android devices
 
 
@@ -105,6 +106,45 @@ until finished
 
 ## 🎈 Usage <a name="usage"></a>
 Add notes about how to use the system. -->
+
+# Screenshots <a name="ss"><a/>
+<table>
+  <tr>
+    <td>  Login Screen</td>
+     <td>  Drawer for Panels</td>
+     </tr>
+  <tr>
+    <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ydeiix5dzo5tj9y86hqq.png" ></td>
+    <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/xqg4qdidbv3sljfb057b.png" ></td>
+  
+  </tr>
+ </table>
+<table>
+  <tr>
+    <td>  Home Screen</td>
+     <td>  Registeration Screen</td>
+     </tr>
+  <tr>
+    <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/8axm32fs9wlzqvl1euhh.jpeg" ></td>
+    <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/f0m1kvzxuka9baha419e.jpeg" ></td>
+  
+  </tr>
+ </table>
+
+<table>
+  <tr>
+<td>  Scanner</td>
+     <td>  Rewards</td>
+     
+     
+  </tr>
+  <tr>
+
+    <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rmydiyr6qd8fr99z73df.png" ></td>
+<td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/he4kmpvrlera1lhfdkc7.jpeg" w></td>
+
+  </tr>
+ </table>
 
 ## ⛏️ Built With <a name = "tech_stack"></a>
 - [MongoDB](https://www.mongodb.com/) - Database
