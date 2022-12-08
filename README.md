@@ -8,8 +8,8 @@
 <div align="center">
 
   [![Status](https://img.shields.io/badge/status-active-success.svg)]() 
-  [![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/issues)
-  [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/pulls)
+  [![GitHub Issues](https://img.shields.io/github/issues/kunaljainwin/student-activity-center.svg)](https://github.com/kunaljainwin/student-activity-center/issues)
+  [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kunaljainwin/student-activity-center.svg)](https://github.com/kylelobo/https://github.com/kunaljainwin/student-activity-center/pulls)
   [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
@@ -26,14 +26,12 @@
 - [Idea / Solution](#idea)
 - [Description](#description)
 - [Benefits](#benefits)
-- [Software Requirements](#srs)
-<!-- - [Dependencies / Limitations](#limitations) -->
-<!-- - [Future Scope](#future_scope) -->
+- [System Requirements](#srs)
 - [Technology Stack](#tech_stack)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgments)
-
-
+<!-- - [Dependencies / Limitations](#limitations) -->
+<!-- - [Future Scope](#future_scope) -->
 
 
 # problem_statement <a name = "problem_statement"></a>
@@ -121,8 +119,9 @@ who participated in this project.
 
 ## 🎉 Acknowledgments <a name = "acknowledgments"></a>
 - Hat tip to anyone whose code was used
-- Inspiration
+- Gratitude to All who supported
 - References
+  
 
 <!-- ## News -->
 <!-- ## Success stories -->
