@@ -134,10 +134,8 @@ Add notes about how to use the system. -->
 
 <table>
   <tr>
-<td>  Scanner</td>
+     <td>  Scanner</td>
      <td>  Rewards</td>
-     
-     
   </tr>
   <tr>
 <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rmydiyr6qd8fr99z73df.png"></td>
