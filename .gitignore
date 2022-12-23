@@ -10,7 +10,7 @@ flutter_native_splash
 #For Backend Only
 /.firebase
 .firebaserc
-*.json
+# *.json
 
 # Miscellaneous
 *.class

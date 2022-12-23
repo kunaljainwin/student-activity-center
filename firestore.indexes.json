@@ -1,0 +1,33 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "placeslist",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "JxQWejmq3Iszahu2qUPG",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "placeslist",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "Yc9hGDQ89ToOw0D2MFZ9",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
