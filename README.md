@@ -29,7 +29,7 @@
 - [Benefits](#benefits)
 - [System Requirements](#system)
 - [Technology Stack](#tech_stack)
-- [Authors](#authors)
+- [Contributors](#authors)
 - [Acknowledgments](#acknowledgments)
 <!-- - [Dependencies / Limitations](#limitations) -->
 <!-- - [Future Scope](#future_scope) -->
@@ -134,8 +134,8 @@ Add notes about how to use the system. -->
 
 <table>
   <tr>
-     <td>  Scanner</td>
-     <td>  Rewards</td>
+    <td>  Rewards</td>
+    <td>  Scanner</td>
   </tr>
   <tr>
 <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rmydiyr6qd8fr99z73df.png"></td>
@@ -143,17 +143,30 @@ Add notes about how to use the system. -->
 
   </tr>
  </table>
+  
+  <table>
+  <tr>
+     <td>  Details</td>
+  </tr>
+  <tr>
+<td><img src="https://user-images.githubusercontent.com/72144717/209308678-0af21947-a677-4ab2-bbbb-ebe2331dcbd2.png"></td>
+<!-- <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/he4kmpvrlera1lhfdkc7.jpeg"></td> -->
+  </tr>
+ </table>
 
 ## ⛏️ Built With <a name = "tech_stack"></a>
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Flutter](https://expressjs.com/) - Frontend Framework
-- [Firebase](https://vuejs.org/) - Backend As a Service
 
+- [Flutter](https://expressjs.com/) - Frontend Framework
+- [Firebase](https://vuejs.org/) - Backend as a Service
+- [Cloud firestore](https://firebase.google.com/docs/firestore) - Database 
+  
 ## ✍️ Authors <a name = "authors"></a>
 - [@kunal jain](https://github.com/kunaljainwin) - Idea & Initial work
 
-<!-- See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) 
-who participated in this project. -->
+ [Refer this if you want to be a contributor ](https://github.com/kunaljainwin/student-activity-center/blob/80ce2d38eb07871aba35c939561ca4d23b37cde6/contributors.md)
+
+See also the list of [contributors](https://github.com//kunaljainwin/student-activity-center/contributors) 
+who participated in this project.
 
 ## 🎉 Acknowledgments <a name = "acknowledgments"></a>
 - Hat tip to anyone whose code was used
