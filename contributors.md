@@ -1,7 +1,8 @@
+# users document schema
 ```json
 
 {
-attendance
+attendance:
 0
 
 branch
