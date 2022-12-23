@@ -29,7 +29,7 @@
 - [Benefits](#benefits)
 - [System Requirements](#system)
 - [Technology Stack](#tech_stack)
-- [Authors](#authors)
+- [Contributors](#authors)
 - [Acknowledgments](#acknowledgments)
 <!-- - [Dependencies / Limitations](#limitations) -->
 <!-- - [Future Scope](#future_scope) -->
@@ -151,6 +151,8 @@ Add notes about how to use the system. -->
 
 ## ✍️ Authors <a name = "authors"></a>
 - [@kunal jain](https://github.com/kunaljainwin) - Idea & Initial work
+
+ [Refer this if you want to be a contributor ](https://github.com/kunaljainwin/student-activity-center/blob/80ce2d38eb07871aba35c939561ca4d23b37cde6/contributors.md)
 
 <!-- See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) 
 who participated in this project. -->
