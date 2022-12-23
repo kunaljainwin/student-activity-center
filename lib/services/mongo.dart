@@ -19,28 +19,39 @@ class MongoDB {
     inspect(db);
   }
 
-  static Future<void> insertData(Map<String, dynamic> data) async {
+  static Future<void> insertEventInDatabase(Map<String, dynamic> data) async {
     try {
       final db = await Db.create(mongoose);
       await db.open();
-      await db.collection('all').insert(data);
+      await db.collection('all').insertOne(data);
       await db.close();
     } catch (e) {
       debugPrint(e.toString());
     }
   }
 
-  static Future<Map<String, dynamic>?> getData(String eventId) async {
+  static Future<void> insertData(Map<String, dynamic> data) async {
+    try {
+      final db = await Db.create(mongoose);
+      await db.open();
+      await db.collection('all').updateOne({"_id": data["_id"]}, data);
+      await db.close();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  static Future<Map<String, dynamic>> getData(String eventId) async {
     try {
       final db = await Db.create(mongoose);
       await db.open();
       var data = await db.collection('all').findOne(where.eq('_id', eventId));
       await db.close();
       debugPrint(data.toString());
-      return data;
+      return data!;
     } catch (e) {
       debugPrint(e.toString());
     }
-    return null;
+    return {};
   }
 }

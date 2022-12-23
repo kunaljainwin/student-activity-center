@@ -1,20 +1,19 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_countdown_timer/countdown.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:get/get.dart';
 import 'package:optimized_cached_image/optimized_cached_image.dart';
+
 import 'package:samadhyan/constants.dart';
 import 'package:samadhyan/Services/mongo.dart';
+import 'package:samadhyan/services/Firebase/dynamic_links_util.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
-import 'package:samadhyan/Services/QR/mobile_scanner.dart';
+
+import 'package:samadhyan/widgets/view_image.dart';
 import 'dart:math' as math;
+
+import 'package:share_plus/share_plus.dart';
 
 class EventDetails extends StatelessWidget {
   const EventDetails({super.key, required this.event});
@@ -31,179 +30,195 @@ class EventDetails extends StatelessWidget {
     // final notes = List<Widget>.generate(event['note'].length,
     //         (i) => Text((i + 1).toString() + ").  " + event['note'][i] + "."))
     // .toList();
+    var textStyleTitle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        // leadingWidth: 20,
-        // toolbarHeight: 30,
-        // toolbarOpacity: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      // appBar: AppBar(),
-      body: ListView(
-        padding: EdgeInsets.symmetric(vertical: 18),
+      // extendBodyBehindAppBar: true,
+      // appBar: AppBar(
+      //   // leadingWidth: 20,
+      //   title: Text(
+      //     event['title'],
+      //     style: TextStyle(color: Colors.black),
+      //   ),
+      //   // toolbarHeight: 30,
+      //   // toolbarOpacity: 0,
+      //   leading: IconButton(
+      //     icon: Icon(Icons.arrow_back_ios),
+      //     onPressed: () => Get.back(),
+      //   ),
+      //   automaticallyImplyLeading: false,
+      //   toolbarHeight: 40,
+      //   // backgroundColor: Colors.transparent,
+      // ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          // getAppBarUI(context),
-          Container(
-            padding: EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 50, color: Colors.lightBlue),
-              ),
-            ),
-            child: Row(
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.90,
+            child: ListView(
+              padding: EdgeInsets.zero,
               children: [
-                Text("Event will begin in  "),
-                CountdownTimer(
-                  endTime: endTime,
-                ),
-              ],
-            ),
-          ),
-          Stack(
-            children: <Widget>[
-              Container(
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  padding: EdgeInsets.all(20.0),
-                  child: OptimizedCacheImage(
-                    imageUrl: event['eventPosterLink'],
-                    fit: BoxFit.contain,
-                  )),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.45,
-                padding: EdgeInsets.all(40.0),
-                // width: MediaQuery.of(context).size.width,
-                decoration:
-                    BoxDecoration(color: Color.fromRGBO(58, 66, 86, .7)),
-                child: Center(
-                  child: Text(
-                    event['title'],
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold),
+                InkWell(
+                  onTap: () {
+                    Get.to(
+                        () => PhotoViewer(imagePath: event['eventPosterLink']));
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                    ),
+                    height: MediaQuery.of(context).size.height * 0.50,
+                    child: OptimizedCacheImage(
+                      imageUrl: event['eventPosterLink'],
+                      fit: BoxFit.fill,
+                      placeholder: (context, url) => const Center(
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              // Positioned(
-              //   left: 8.0,
-              //   top: 60.0,
-              //   child: InkWell(
-              //     onTap: () {
-              //       Navigator.pop(context);
-              //     },
-              //     child: Icon(Icons.arrow_back, color: Colors.white),
-              //   ),
-              // )
-            ],
-          ),
 
-          Container(
-            height: 60,
-            padding: EdgeInsets.all(10),
-            child: ListView(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              children: [
-                SizedBox(
-                  width: 20,
-                ),
-                OutlinedButton(
-                    onPressed: () {
-                      Event e = Event(
-                        title: event['title'],
-                        description: event['description'],
-                        location: event['location'].toString(),
-                        startDate: event["startTime"].toDate(),
-                        endDate: event["endTime"].toDate(),
-                      );
+                Container(
+                  height: 60,
+                  padding: EdgeInsets.all(10),
+                  child: ListView(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      Text(event['title'], style: textStyleTitle),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Event e = Event(
+                            title: event['title'],
+                            description: event['description'],
+                            location: event['location'].toString(),
+                            startDate: event["startTime"].toDate(),
+                            endDate: event["endTime"].toDate(),
+                          );
 
-                      Add2Calendar.addEvent2Cal(e);
-                    },
-                    child: Row(
-                      children: const [
-                        Icon(Icons.edit_calendar),
-                        Text("   Add to Calendar")
-                      ],
-                    )),
+                          Add2Calendar.addEvent2Cal(e);
+                        },
+                        enableFeedback: true,
+                        icon: Row(
+                          children: const [
+                            Icon(Icons.edit_calendar),
+                            Text("   Add to Calendar")
+                          ],
+                        ),
+                      ),
+                      // OutlinedButton(
+                      //     onPressed: () {},
+                      //     child: Text(
+                      //       "Frequently asked questions",
+                      //     )),
+                    ],
+                  ),
+                ),
+
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                      "Register for the contest in advance and You can fill out the contact information at the registration step."),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                const ListTile(
+                  leading: Icon(
+                    Icons.label_important,
+                    color: Colors.teal,
+                  ),
+                  title: Text("Important Note", textScaleFactor: 1.3),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text(event["importantNote"]),
+                ),
+                // Column(crossAxisAlignment: CrossAxisAlignment.start, children: notes),
+                const SizedBox(
+                  height: 10,
+                ),
+                const ListTile(
+                  leading: Icon(
+                    Icons.announcement_outlined,
+                    color: Colors.amber,
+                  ),
+                  title: Text("Announcement", textScaleFactor: 1.3),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text(event['announcement']),
+                ),
+
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Text(
+                    "Users must register to participate.\nWe hope you will enjoy this event!",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
                 SizedBox(
-                  width: 20,
+                  height: 20,
                 ),
-                ActionChip(
-                    avatar: Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.rotationY(math.pi),
-                        child: Icon(
-                          Icons.reply_outlined,
-                        )),
-                    label: Text("Share")),
-                SizedBox(
-                  width: 20,
-                ),
-                ActionChip(
-                  avatar: Icon(Icons.thumb_up_off_alt),
-                  label: Text("Like"),
-                  // onPressed: () => {},
-                  // tooltip: "Like",
-                ),
-                SizedBox(
-                  width: 30,
-                ),
-                OutlinedButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Frequently asked questions",
-                    )),
               ],
             ),
           ),
-
-          Text(
-              "Register for the contest in advance and You can fill out the contact information at the registration step."),
-          Text(
-              " we may reach out to eligible contest winners for Rewards and Prizes."),
-          ListTile(
-            leading: Icon(
-              Icons.label_important,
-              color: Colors.teal,
-            ),
-            title: Text("Important Note", textScaleFactor: 1.3),
-          ),
-          // Column(crossAxisAlignment: CrossAxisAlignment.start, children: notes),
-          ListTile(
-            leading: Icon(
-              Icons.announcement_outlined,
-              color: Colors.amber,
-            ),
-            title: Text("Announcement", textScaleFactor: 1.3),
-          ),
-          Text(event['announcement']),
-
-          Text(
-              "Users must register to participate. We hope you enjoy this event!"),
-
+          const Divider(),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            padding: const EdgeInsets.symmetric(vertical: 0.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                isRegistered
-                    ? Icon(Icons.done_outline)
-                    : ActionChip(
-                        backgroundColor: Colors.black,
-                        onPressed: () {
+                IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: Icon(Icons.arrow_back_ios)),
+                ActionChip(
+                  backgroundColor: isRegistered ? Colors.grey : Colors.blue,
+                  onPressed: isRegistered
+                      ? null
+                      : () {
                           showDialog(
                               context: context,
                               builder: (context) {
-                                return DialogForRegisterNow(context);
+                                return dialogForRegisterNow(context);
                               });
                         },
-                        tooltip: "Register Now",
-                        label: const Text(
+                  tooltip: "Register Now",
+                  label: isRegistered
+                      ? CountdownTimer(
+                          endTime: endTime,
+                        )
+                      : const Text(
                           "Register Now",
-                          style: TextStyle(color: Colors.white),
+                          textScaleFactor: 1.3,
+                          style: TextStyle(
+                              color: Colors.white, fontFamily: 'Montserrat'),
                         ),
-                      ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    String eventUrl = await DynamicLinks.buildDynamicLink(
+                        documentSnapshot: event);
+                    Share.share(
+                        "Hey, I am inviting you to join this event. Please join this event by clicking on the link below. \n\n$eventUrl",
+                        subject: "Join this event",
+                        sharePositionOrigin: Rect.fromLTWH(0, 0, 0, 0));
+                  },
+                  icon: Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.rotationY(math.pi),
+                      child: const Icon(
+                        Icons.reply_outlined,
+                        size: 30,
+                      )),
+                ),
               ],
             ),
           ),
@@ -227,7 +242,7 @@ class EventDetails extends StatelessWidget {
             top: MediaQuery.of(context).padding.top, left: 8, right: 8),
         child: Row(
           children: <Widget>[
-            Expanded(
+            const Expanded(
               child: Center(
                 child: Text(
                   'Explore',
@@ -238,7 +253,7 @@ class EventDetails extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
+            SizedBox(
               width: AppBar().preferredSize.height + 40,
               height: AppBar().preferredSize.height,
               child: Row(
@@ -252,8 +267,8 @@ class EventDetails extends StatelessWidget {
                         Radius.circular(32.0),
                       ),
                       onTap: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Icon(Icons.favorite_border),
                       ),
                     ),
@@ -267,7 +282,7 @@ class EventDetails extends StatelessWidget {
     );
   }
 
-  Widget DialogForRegisterNow(BuildContext context) {
+  Widget dialogForRegisterNow(BuildContext context) {
     String name = userName, email = userEmail, phone = userContactNumber;
     bool isOpenToRegister =
         DateTime.now().compareTo(event['lastRegisterationTime'].toDate()) < 0;
@@ -375,16 +390,19 @@ class EventDetails extends StatelessWidget {
                           child: Text("Register Now"),
                           onPressed: () async {
                             await handleRegisterNow({
-                              "_id": userSnapshot.id,
+                              "id": userSnapshot.id,
                               "name": name,
+                              "branch": userSnapshot['branch'],
+                              "rollno": userSnapshot['rollnumber'],
                               "email": email,
-                              "phone": phone
+                              "phone": phone,
+                              "attended": false,
                             });
                             Get.back();
                           },
                         ),
                       )
-                    : Center(
+                    : const Center(
                         child: Chip(
                           label: Text("REGISTERATION CLOSED"),
                           backgroundColor: Colors.red,
@@ -397,22 +415,16 @@ class EventDetails extends StatelessWidget {
   }
 
   Future handleRegisterNow(Map<String, dynamic> data) async {
-    await MongoDB.insertData({
-      "_id": event.id,
-      "name": event['title'],
-      "timestamp": DateTime.now(),
-      "registered": [
-        {
-          "name": data['name'],
-          "email": data['email'],
-          "phone": data['phone'],
-        }
-      ],
-    });
-    await event.reference.update({
+    // MongoDB.insertData({
+    //   "_id": event.id,
+    //   "name": event['title'],
+    //   "timestamp": DateTime.now(),
+    // });
+    event.reference.update({
       "registered": FieldValue.arrayUnion([userEmail])
     });
-    userSnapshot.reference.update({'registerations': FieldValue.increment(1)});
+    await userSnapshot.reference
+        .update({'registerations': FieldValue.increment(1)});
     Get.back();
   }
 

@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:samadhyan/Type%20Of%20User/Faculty/manager.dart';
 
+import 'events.dart';
 import 'home.dart';
 
-class FacultyDashboard extends StatefulWidget {
-  const FacultyDashboard({super.key});
+class EventCoordinatorDashboard extends StatefulWidget {
+  const EventCoordinatorDashboard({super.key});
 
   @override
-  State<FacultyDashboard> createState() => _FacultyDashboardState();
+  State<EventCoordinatorDashboard> createState() =>
+      _EventCoordinatorDashboardState();
 }
 
-class _FacultyDashboardState extends State<FacultyDashboard> {
+class _EventCoordinatorDashboardState extends State<EventCoordinatorDashboard> {
   var _screens = [
-    FacultyHome(),
-    FacultyRankManager(),
+    EventCoordinatorHome(),
+    EventCoordinatorEvents(),
   ];
   int _currentIndex = 0;
   @override

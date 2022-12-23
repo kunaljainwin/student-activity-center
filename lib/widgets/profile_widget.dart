@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:optimized_cached_image/optimized_cached_image.dart';
-import 'package:samadhyan/Common%20Screens/drawer.dart';
 import 'package:samadhyan/Utilities/launch_a_url.dart';
 import 'package:samadhyan/Utilities/send_email.dart';
+import 'package:samadhyan/role_based/student/drawer.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
 
 class ProfileAvatar extends StatelessWidget {
@@ -25,11 +25,25 @@ class ProfileAvatar extends StatelessWidget {
             builder: (context) {
               return Center(
                 child: Dialog(
-                  insetAnimationDuration: Duration(seconds: 1),
                   child: ListView(
                     shrinkWrap: true,
                     children: [
                       Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10)),
+                              gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blue,
+                                    Colors.primaries[Random()
+                                        .nextInt(Colors.primaries.length)],
+                                    Colors.primaries[Random()
+                                        .nextInt(Colors.primaries.length)]
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  stops: const [0.1, 0.5, 0.9])),
                           height: 40,
                           child: Row(
                             children: [
@@ -37,7 +51,7 @@ class ProfileAvatar extends StatelessWidget {
                                   onPressed: () {
                                     Get.back();
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     CupertinoIcons.multiply,
                                     color: Colors.black87,
                                   ))
@@ -46,53 +60,55 @@ class ProfileAvatar extends StatelessWidget {
                       ListTile(
                           onTap: () {},
                           leading: CircleAvatar(
-                            radius: 20,
+                            radius: 24,
                             child: OptimizedCacheImage(
                               imageUrl: userSnapshot["imageurl"],
+                              fit: BoxFit.fill,
+                              errorWidget: ((context, url, error) {
+                                return const Icon(CupertinoIcons.person);
+                              }),
+                              imageBuilder: (context, image) {
+                                return CircleAvatar(
+                                  radius: 20,
+                                  foregroundImage: image,
+                                );
+                              },
                             ),
                           ),
                           title: Text(userSnapshot["nickname"]),
-                          trailing: Icon(Icons.arrow_downward)),
-                      Divider(
+                          trailing: const Icon(Icons.arrow_downward)),
+                      const Divider(
                         thickness: 1,
                       ),
                       ListTile(
                         onTap: () {},
-                        title: Text("Settings"),
-                        leading: Icon(Icons.settings_outlined),
+                        title: const Text("Settings"),
+                        leading: const Icon(Icons.settings_outlined),
                       ),
                       ListTile(
                         onTap: () async {
                           sendEmail("rultimatrix@gmail.com");
                         },
-                        leading: Icon(CupertinoIcons.question_circle),
-                        title: Text("Help and Feedback"),
+                        leading: const Icon(CupertinoIcons.question_circle),
+                        title: const Text("Help and Feedback"),
                       ),
-                      Divider(),
+                      const Divider(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           InkWell(
                             onTap: () async =>
                                 launchAUrl(userDataPrivacyPolicy),
-                            child: Text(
-                              "Privacy policy",
-                              textScaleFactor: 0.9,
-                              style: TextStyle(color: Colors.black54),
-                            ),
+                            child: policyText("Privacy policy"),
                           ),
                           InkWell(
                             onTap: () async => launchAUrl(termsAndConditions),
-                            child: Text(
-                              "Terms of Service",
-                              textScaleFactor: 0.9,
-                              style: TextStyle(color: Colors.black54),
-                            ),
+                            child: policyText("Terms of Service"),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 4,
+                      const SizedBox(
+                        height: 6,
                       )
                     ],
                   ),
@@ -102,25 +118,25 @@ class ProfileAvatar extends StatelessWidget {
       },
       child: OptimizedCacheImage(
         imageUrl: userSnapshot["imageurl"],
+        fit: BoxFit.fill,
+        errorWidget: ((context, url, error) {
+          return const Icon(CupertinoIcons.person);
+        }),
         imageBuilder: (context, image) {
           return CircleAvatar(
             radius: 17,
-            backgroundColor: Colors.white,
             foregroundImage: image,
           );
         },
-        placeholder: (context, s) {
-          return CircleAvatar(
-            radius: 17,
-            backgroundColor: Color.fromRGBO(Random().nextInt(250),
-                Random().nextInt(250), Random().nextInt(250), 0.9),
-            child: Text(
-              userSnapshot["nickname"] ?? "",
-              style: TextStyle(color: Colors.white),
-            ),
-          );
-        },
       ),
+    );
+  }
+
+  Text policyText(String text) {
+    return Text(
+      text,
+      textScaleFactor: 0.9,
+      style: const TextStyle(color: Colors.black54),
     );
   }
 }

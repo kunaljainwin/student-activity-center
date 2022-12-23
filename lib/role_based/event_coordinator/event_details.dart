@@ -1,16 +1,18 @@
+import 'dart:io';
 import 'package:add_2_calendar/add_2_calendar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_countdown_timer/countdown.dart';
-import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:get/get.dart';
-import 'package:samadhyan/constants.dart';
-import 'package:samadhyan/services/mongo.dart';
-import 'package:samadhyan/widgets/login_helpers.dart';
+import 'package:optimized_cached_image/optimized_cached_image.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:samadhyan/Services/QR/mobile_scanner.dart';
+import 'package:samadhyan/role_based/event_coordinator/excel.dart';
 
 class EventDetails extends StatelessWidget {
   const EventDetails({super.key, required this.event});
@@ -18,6 +20,8 @@ class EventDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    num totalAttendees = event["attendees"].length;
+    num totalRegistered = event["registered"].length + totalAttendees;
     // final notes = List<Widget>.generate(event['note'].length,
     //         (i) => Text((i + 1).toString() + ").  " + event['note'][i] + "."))
     //     .toList();
@@ -27,28 +31,68 @@ class EventDetails extends StatelessWidget {
         padding: EdgeInsets.all(8),
         children: [
           getAppBarUI(context),
-          FutureBuilder(
-              future: MongoDB.getData(event.id),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(snapshot.data.toString());
-                }
-                return Text("Loading");
-              }),
+          Text(event["registered"].toString()),
+          Text(event["attendees"].toString()),
+          ElevatedButton(
+              onPressed: () async {
+                List<String> emails =
+                    List<String>.from(event["registered"], growable: true);
+
+                ExcelData.onSave(
+                    eventName: event["title"],
+                    fileName: "registerations",
+                    names: emails);
+              },
+              child: const Text("Get excel of registered")),
+          ElevatedButton(
+              onPressed: () async {
+                List<String> emails =
+                    List<String>.from(event["attendees"], growable: true);
+                ExcelData.onSave(
+                    eventName: event["title"],
+                    fileName: "attendance",
+                    names: emails);
+              },
+              child: const Text("Get excel for attendees")),
+
+          // FutureBuilder<Map>(
+          //     future: MongoDB.getData(event.id),
+          //     builder: (context, snapshot) {
+          //       if (snapshot.connectionState == ConnectionState.done &&
+          //           snapshot.hasData) {
+          //         var ans = snapshot.data!["registered"].toList();
+          //         return Container(
+          //           height: 100,
+          //           child: ListView.builder(
+          //             shrinkWrap: true,
+          //             itemBuilder: (context, index) {
+          //               return ListTile(
+          //                 title: Text(ans[index]["name"]),
+          //                 leading: Text(ans[index]["rollnumber"].toString()),
+          //                 trailing: Text(ans[index]["branch"]),
+          //                 subtitle: Text(ans[index]["email"]),
+          //               );
+          //             },
+          //             itemCount: ans.length,
+          //           ),
+          //         );
+          //       }
+          //       return Text("Loading");
+          //     }),
           Stack(
             children: <Widget>[
               Container(
                 padding: EdgeInsets.only(left: 10.0),
                 height: MediaQuery.of(context).size.height * 0.5,
-                child: CachedNetworkImage(imageUrl: event['eventPosterLink']),
+                child: OptimizedCacheImage(imageUrl: event['eventPosterLink']),
               ),
               Container(
                 height: MediaQuery.of(context).size.height * 0.5,
                 padding: EdgeInsets.all(40.0),
                 width: MediaQuery.of(context).size.width,
                 decoration:
-                    BoxDecoration(color: Color.fromRGBO(58, 66, 86, .9)),
-                child: Center(
+                    const BoxDecoration(color: Color.fromRGBO(58, 66, 86, .9)),
+                child: const Center(
                   child: Text(
                     "Event Name",
                     style: TextStyle(
@@ -90,7 +134,7 @@ class EventDetails extends StatelessWidget {
                     Add2Calendar.addEvent2Cal(e);
                   },
                   child: Row(
-                    children: [
+                    children: const [
                       Icon(Icons.edit_calendar),
                       Text("   Add to Calendar")
                     ],

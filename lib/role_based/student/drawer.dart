@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:optimized_cached_image/optimized_cached_image.dart';
 import 'package:samadhyan/Services/Firebase/backend.dart';
-import 'package:samadhyan/Type%20Of%20User/Faculty/dashboard.dart';
 import 'package:samadhyan/Utilities/launch_a_url.dart';
 import 'package:samadhyan/Utilities/send_email.dart';
+import 'package:samadhyan/role_based/admin/dashboard.dart';
+import 'package:samadhyan/role_based/event_coordinator/dashboard.dart';
+import 'package:samadhyan/role_based/faculty/dashboard.dart';
+import 'package:samadhyan/role_based/student/profile_page.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
-
-import '../Type Of User/Admin/dashboard.dart';
-import '../Type Of User/Event Coordinator/dashboard.dart';
 
 String userDataPrivacyPolicy =
     "https://docs.google.com/document/d/1aaPMtWuy6lPhNQIFFyqSIHop_nVGjtLx_mpNoLZaA6Q/edit?usp=sharing";
@@ -46,25 +46,28 @@ class _MyDrawerState extends State<MyDrawer> {
       children: [
         UserAccountsDrawerHeader(
           arrowColor: Colors.grey,
-          decoration: BoxDecoration(
-              // gradient: LinearGradient(
-              //     colors: [Colors.lightBlue, Colors.transparent]),
-              // backgroundBlendMode: BlendMode.multiply,
-              // boxShadow: [BoxShadow(color: Colors.brown)],
-
-              // shape: BoxShape.circle,
-
-              ),
           accountName: null,
-          currentAccountPicture: OptimizedCacheImage(imageUrl: urlLogo),
+          decoration: BoxDecoration(
+              image:
+                  DecorationImage(image: OptimizedCacheImageProvider(urlLogo))),
           accountEmail: null,
+        ),
+        ListTile(
+          leading: const Icon(Icons.account_box),
+
+          subtitle: const Text("Details of your account"),
+          onTap: () {
+            Get.to(() => const ProfilePage());
+          },
+          // leading: Icon(Icons.account_circle),
+          title: const Text("Profile", overflow: TextOverflow.fade),
         ),
         userRank == 0
             ? ListTile(
-                leading: Icon(Icons.admin_panel_settings),
-                subtitle: Text("Admin control panel"),
+                leading: const Icon(Icons.admin_panel_settings),
+                subtitle: const Text("Admin control panel"),
                 onTap: () {
-                  Get.to(() => AdminDashboard());
+                  Get.to(() => const AdminDashboard());
                 },
                 // leading: Icon(Icons.account_circle),
                 title: const Text("Admin", overflow: TextOverflow.fade),
@@ -72,10 +75,10 @@ class _MyDrawerState extends State<MyDrawer> {
             : Container(),
         userRank <= 1
             ? ListTile(
-                leading: Icon(Icons.supervised_user_circle),
-                subtitle: Text("Faculty control panel"),
+                leading: const Icon(Icons.supervised_user_circle),
+                subtitle: const Text("Faculty control panel"),
                 onTap: () {
-                  Get.to(() => FacultyDashboard());
+                  Get.to(() => const FacultyDashboard());
                 },
                 // leading: Icon(Icons.account_circle),
                 title: const Text("Faculty", overflow: TextOverflow.fade),
@@ -83,10 +86,10 @@ class _MyDrawerState extends State<MyDrawer> {
             : Container(),
         userRank <= 2
             ? ListTile(
-                leading: Icon(Icons.admin_panel_settings),
-                subtitle: Text("Event organizer control panel"),
+                leading: const Icon(Icons.admin_panel_settings),
+                subtitle: const Text("Event organizer control panel"),
                 onTap: () {
-                  Get.to(() => EventCoordinatorDashboard());
+                  Get.to(() => const EventCoordinatorDashboard());
                 },
                 // leading: Icon(Icons.account_circle),
                 title:
@@ -127,7 +130,7 @@ class _MyDrawerState extends State<MyDrawer> {
           horizontalTitleGap: 16,
         ),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           onTap: () async {
             launchAUrl(urlSite);
           },
@@ -139,7 +142,7 @@ class _MyDrawerState extends State<MyDrawer> {
           horizontalTitleGap: 16,
         ),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           onTap: () {
             showDialog(
                 context: context,
@@ -155,8 +158,8 @@ class _MyDrawerState extends State<MyDrawer> {
                           child: const Text("No")),
                       TextButton(
                           onPressed: () async {
-                            signOut();
                             Get.back();
+                            signOut();
                           },
                           child: const Text("Yes"))
                     ],

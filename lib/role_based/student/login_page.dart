@@ -16,11 +16,13 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Align(
-            alignment: Alignment.center,
+          Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(
+                  height: 200,
+                ),
                 Text(
                   'Student activity center',
                   style: TextStyle(
@@ -42,34 +44,32 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 50,
+                  height: MediaQuery.of(context).size.height * 0.3,
                 ),
-                ElevatedButton.icon(
-                    onPressed: () async {
-                      try {
-                        await signInWithGoogle();
-                      } catch (e) {
-                        Fluttertoast.showToast(msg: e.toString());
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(primary: Colors.white),
-                    icon: SizedBox(
-                        height: 30,
-                        child: OptimizedCacheImage(
-                            imageUrl:
-                                'http://pngimg.com/uploads/google/google_PNG19635.png')),
-                    label: Text(
-                      "  Sign in with Google",
-                      style: TextStyle(color: Colors.black),
-                    )),
+                // ElevatedButton.icon(
+                //     onPressed: () async {
+                //       try {
+                //         await signInWithGoogle();
+                //       } catch (e) {
+                //         Fluttertoast.showToast(msg: e.toString());
+                //       }
+                //     },
+                //     style: ElevatedButton.styleFrom(primary: Colors.white),
+                //     icon: SizedBox(
+                //         height: 30,
+                //         child: OptimizedCacheImage(
+                //             imageUrl:
+                //                 'http://pngimg.com/uploads/google/google_PNG19635.png')),
+                //     label: Text(
+                //       "  Sign in with Google",
+                //       style: TextStyle(color: Colors.black),
+                //     )),
                 ActionChip(
                   onPressed: () async {
                     await signInWithMicrosoft();
-                    launchAUrl(
-                        "https://visitcounter-fef16.firebaseapp.com/__/auth/handler");
                   },
-                  label: Text(
-                    'Microsoft Login',
+                  label: const Text(
+                    'Sign in with Microsoft',
                     style: TextStyle(color: Colors.white),
                   ),
                   backgroundColor: Colors.black,

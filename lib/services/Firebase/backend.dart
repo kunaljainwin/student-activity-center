@@ -59,37 +59,48 @@ class AddUser {
   Future<void> addUser() async {
     // userId = useR.uid;
     // Check is already sign up
-    QuerySnapshot result = await FirebaseFirestore.instance
+
+    userEmail = useR.email!.split("@")[0];
+
+    DocumentSnapshot result = await FirebaseFirestore.instance
         .collection('users')
-        .where('id', isEqualTo: useR.uid)
+        .doc(userEmail)
         .get();
-    final List<DocumentSnapshot> documents = result.docs;
-    if (documents.isEmpty) {
+    if (result.exists == false) {
+      num rollNumber = int.parse(userEmail.substring(2, userEmail.length));
+      String branch = userEmail.substring(0, 2);
+
       // Update data to server if new user
       Timestamp t = Timestamp.now();
-      await FirebaseFirestore.instance.collection('users').doc(useR.uid).set(
+      bool isStudent = useR.email!.contains(RegExp(r'[0-9]'));
+      await FirebaseFirestore.instance.collection('users').doc(userEmail).set(
         {
-          'rank': 3,
+          'rank': isStudent ? 3 : 1,
+          'branch': branch.toUpperCase(),
+          'rollnumber': rollNumber,
           'useremail': useR.email ?? "",
           'nickname': useR.displayName ?? "",
+          'phone': useR.phoneNumber ?? "",
           'home': userLocation,
           'registerations': 0,
           'attendance': 0,
           'imageurl': useR.photoURL ??
-              "https://firebasestorage.googleapis.com/v0/b/visitcounter-fef16.appspot.com/o/new-1363.svg?alt=media&token=a93a0423-967b-43dc-9ac6-47155a67d5cf",
+              "https://firebasestorage.googleapis.com/v0/b/visitcounter-fef16.appspot.com/o/files%2Frultimatrix%40gmail.com%2Fdata%2Fuser%2F0%2Fcom.example.visitcounter%2Fcache%2Ffile_picker%2FIMG-20221201-WA0014.jpg%2FTimeOfDay(23%3A34)?alt=media&token=ba377716-1f41-443a-9c93-182bdfefd733",
           'id': useR.uid,
           "dateofbirth": t,
           'firsttime': t,
-          "lasttime": DateTime.now(),
+          "lasttime": useR.metadata.lastSignInTime,
           "fcmtoken": userNewFCMToken,
+          "gmail": ""
         },
       );
     } else {
       isLoggedIn = true;
+      userFCMToken = result['fcmtoken'];
       return userFCMToken != userNewFCMToken
-          ? FirebaseFirestore.instance.collection('users').doc(useR.uid).set({
+          ? FirebaseFirestore.instance.collection('users').doc(userEmail).set({
               "fcmtoken": userNewFCMToken,
-              "lasttime": DateTime.now(),
+              "lasttime": useR.metadata.lastSignInTime,
               'imageurl': useR.photoURL ?? "",
               'nickname': useR.displayName ?? "",
             }, SetOptions(merge: true))
@@ -112,12 +123,13 @@ Future<void> signOut() async {
 
 Future<void> signInWithMicrosoft() async {
   final microsoftProvider = MicrosoftAuthProvider();
-  debugPrint(microsoftProvider.parameters.toString());
+  // debugPrint(microsoftProvider.parameters.toString());
   microsoftProvider.setCustomParameters({
     'prompt': 'select_account',
-    'login_hint': "Only for RTU Teachers and Students"
+    'login_hint': "cs19503@rtu.ac.in"
+    // "domain_hint": "rtu.ac.in"
   });
-
+  microsoftProvider.addScope('openid');
   User user;
   try {
     if (kIsWeb) {
@@ -131,6 +143,7 @@ Future<void> signInWithMicrosoft() async {
     }
     debugPrint(user.toString());
     if (user.email!.endsWith("@rtu.ac.in")) {
+      userEmail = user.email!.split("@")[0];
       await AddUser(user).addUser();
     } else {
       await signOut();

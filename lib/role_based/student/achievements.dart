@@ -1,8 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:optimized_cached_image/optimized_cached_image.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:samadhyan/constants.dart';
 import 'package:samadhyan/widgets/badge_card.dart';
@@ -111,7 +110,7 @@ class AchievementsPage extends StatelessWidget {
                   children: [
                     Container(
                       height: 196,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           border: Border.symmetric(
                               // vertical: BorderSide(
                               //     width: 2, color: Colors.blueGrey.shade400),
@@ -122,7 +121,7 @@ class AchievementsPage extends StatelessWidget {
                               topLeft: Radius.circular(18),
                               topRight: Radius.circular(18)),
                           image: DecorationImage(
-                              image: CachedNetworkImageProvider(
+                              image: OptimizedCacheImageProvider(
                                   "https://media3.giphy.com/media/l378BkyZPamSNIQIo/200w.webp?cid=ecf05e47au8hg6aetg10l9ly2wsxjohdekym5sn3ef28vjl5&rid=200w.webp&ct=g"),
                               opacity: 1,
                               fit: BoxFit.fill)),
@@ -140,7 +139,7 @@ class AchievementsPage extends StatelessWidget {
                                         color: Colors.white.withOpacity(0.5))),
                                 TextSpan(
                                     text: level.toString(),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 50, color: Colors.white))
                               ],
                             ),
@@ -153,7 +152,7 @@ class AchievementsPage extends StatelessWidget {
                       alignment: Alignment.topRight,
                       child: TextButton(
                         onPressed: () {},
-                        child: Text.rich(
+                        child: const Text.rich(
                             TextSpan(children: [
                               TextSpan(
                                   text: "More  ",

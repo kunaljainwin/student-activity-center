@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:samadhyan/role_based/faculty/manager.dart';
 
 import 'home.dart';
-import 'manager.dart';
 
-class AdminDashboard extends StatefulWidget {
-  const AdminDashboard({super.key});
+class FacultyDashboard extends StatefulWidget {
+  const FacultyDashboard({super.key});
 
   @override
-  State<AdminDashboard> createState() => _AdminDashboardState();
+  State<FacultyDashboard> createState() => _FacultyDashboardState();
 }
 
-class _AdminDashboardState extends State<AdminDashboard> {
-  var _screens = [
-    AdminHome(),
-    AdminRankManager(),
+class _FacultyDashboardState extends State<FacultyDashboard> {
+  final _screens = [
+    const FacultyHome(),
+    const FacultyRankManager(),
   ];
   int _currentIndex = 0;
   @override
@@ -30,9 +30,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           items: [
             BottomNavigationBarItem(
                 icon: Icon(Icons.account_box), label: "Profile"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.control_point_duplicate_sharp),
-                label: "Manage Admins")
+            BottomNavigationBarItem(icon: Icon(Icons.event), label: "My Events")
           ]),
     );
   }

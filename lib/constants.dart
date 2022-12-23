@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:samadhyan/widgets/login_helpers.dart';
 
-const String app_name = "APP_NAME";
-num error_distance = 10;
+const String appName = "APP_NAME";
+num errorDistance = 10;
 bool devMode = false;
 bool subscription = false;
 String userEmail = "";
@@ -20,7 +19,7 @@ String userNewFCMToken = "";
 // int nNotifications = 1;
 // List<DocumentReference> userBought = [];
 // String userOccupation = "";
-GeoPoint userLocation = GeoPoint(0, 0);
+GeoPoint userLocation = const GeoPoint(0, 0);
 //if u add some var here please recheck with firebase operations AddUSer
 // String userAddressLine1 = "";
 String appLogo = "";
@@ -34,5 +33,4 @@ String appLogo = "";
 // Timestamp userDob = Timestamp.now();
 // bool isDarkMode = false;
 // String userProfilePictureUrl = "";
-// int loginType = 0;
-
+// int loginType = 0; 

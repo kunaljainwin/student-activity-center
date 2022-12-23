@@ -9,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:optimized_cached_image/optimized_cached_image.dart';
-import 'package:samadhyan/Common%20Screens/drawer.dart';
+
 import 'package:samadhyan/widgets/title_box.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -117,6 +117,8 @@ class _CreateEventState extends State<CreateEvent> {
     prefs.setString('announcement', announcement);
     prefs.setString('importantNote', importantNote);
     prefs.setString('eventPosterLink', eventPosterLink);
+
+    // create event in MongoDB
   }
 
   @override
@@ -297,36 +299,9 @@ class _CreateEventState extends State<CreateEvent> {
                   ),
                 ),
                 titleBox("Ending Date and Time"),
-                InkWell(
-                  onTap: () {
-                    showCupertinoDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialog(
-                            child: Wrap(
-                              children: [
-                                CupertinoDatePicker(
-                                  onDateTimeChanged: (DateTime dt) {
-                                    setState(() {
-                                      endTime = dt;
-                                    });
-                                  },
-                                  initialDateTime: DateTime.now(),
-                                ),
-                                TextButton(
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                    child: Text("Done"))
-                              ],
-                            ),
-                          );
-                        });
-                  },
-                  child: Text(
-                    DateFormat().format(endTime).toString(),
-                  ),
-                ),
+                saveTime(context, (dt) {
+                  endTime = dt;
+                }),
                 titleBox("Announcements"),
                 TextFormField(
                   initialValue: announcement,
@@ -492,6 +467,36 @@ class _CreateEventState extends State<CreateEvent> {
                   ),
                 ),
               ])),
+    );
+  }
+
+  InkWell saveTime(BuildContext context, Function callback) {
+    return InkWell(
+      onTap: () {
+        showCupertinoDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                  content: CupertinoDatePicker(
+                    onDateTimeChanged: (DateTime dt) {
+                      setState(() {
+                        callback(dt);
+                      });
+                    },
+                    initialDateTime: DateTime.now(),
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        child: const Text("Done")),
+                  ]);
+            });
+      },
+      child: Text(
+        DateFormat().format(endTime).toString(),
+      ),
     );
   }
 }

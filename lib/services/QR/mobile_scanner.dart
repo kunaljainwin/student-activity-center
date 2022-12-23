@@ -134,12 +134,18 @@ class _ScannerState extends State<Scanner> {
                       0) {
                 MongoDB.insertData({
                   '_id': widget.documentSnapshot.id,
-                  'attendees': FieldValue.arrayUnion([result.rawValue]),
+                  'attendees': FieldValue.arrayUnion([
+                    {
+                      // 'name':
+                      'email': result.rawValue,
+                      'time': DateTime.now(),
+                    }
+                  ]),
                   // Need to code here to insert data into the database
                 });
                 await widget.documentSnapshot.reference.update(
                   {
-                    // 'registered': FieldValue.arrayRemove([userEmail]),
+                    'registered': FieldValue.arrayRemove([userEmail]),
                     'attendees': FieldValue.arrayUnion([result.rawValue]),
                   },
                 );

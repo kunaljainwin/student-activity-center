@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:samadhyan/constants.dart';
+import 'package:samadhyan/role_based/Student/event_details.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
 
 class DynamicLinks {
@@ -13,38 +16,34 @@ class DynamicLinks {
 
     if (deepLink != null) {
       await handleDynamicLink(deepLink);
+      devMode ? debugPrint(deepLink.toString()) : null;
     }
     FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
-      final Uri? deepLink = dynamicLinkData.link;
+      final Uri deepLink = dynamicLinkData.link;
 
-      if (deepLink != null) {
-        handleDynamicLink(deepLink);
-      }
-
-      // Navigator.pushNamed(context, dynamicLinkData.link.path);
+      handleDynamicLink(deepLink);
     }, onError: (error) {
       // Handle errors
     });
   }
 
   static handleDynamicLink(Uri url) async {
-    UnimplementedError();
     String? docPath = url.queryParameters['ref'];
-    if (url.toString().contains("doc") && docPath != null) {
+    if (url.toString().contains("event") && docPath != null) {
       var docS = await FirebaseFirestore.instance.doc(docPath).get();
+      Get.to(() => EventDetails(event: docS));
     } else if (url.toString().contains("user") && docPath != null) {}
   }
 
   ///Build a dynamic link firebase
-  static Future<String> buildDynamicLink(DocumentSnapshot documentSnapshot,
-      {bool short = true}) async {
-    UnimplementedError();
-
+  static Future<String> buildDynamicLink(
+      {bool short = true,
+      required DocumentSnapshot<Object?> documentSnapshot}) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: url,
-      link: Uri.parse('$url/doc?ref=${documentSnapshot.reference.path}'),
-      androidParameters: AndroidParameters(
-        fallbackUrl: Uri.parse("https://artstick-2021.web.app"),
+      link: Uri.parse('$url/event?ref=${documentSnapshot.reference.path}'),
+      androidParameters: const AndroidParameters(
+        // fallbackUrl: Uri.parse("https://artstick-2021.web.app"),
         packageName: "com.example.visitcounter",
         minimumVersion: 0,
       ),
@@ -53,15 +52,15 @@ class DynamicLinks {
         minimumVersion: '0',
       ),
       socialMetaTagParameters: SocialMetaTagParameters(
-          description: documentSnapshot["placeslist"].toString(),
-          imageUrl: Uri.parse(documentSnapshot["imageurl"]),
+          description: documentSnapshot["description"].toString(),
+          imageUrl: Uri.parse(documentSnapshot["eventPosterLink"]),
           title: documentSnapshot["title"]),
     );
 
     if (short) {
       final ShortDynamicLink dynamicUrl = await FirebaseDynamicLinks.instance
           .buildShortLink(parameters,
-              shortLinkType: ShortDynamicLinkType.short);
+              shortLinkType: ShortDynamicLinkType.unguessable);
       url = dynamicUrl.shortUrl.toString();
     } else {
       url = parameters.link.toString();
@@ -87,7 +86,7 @@ class DynamicLinks {
       socialMetaTagParameters: SocialMetaTagParameters(
           description: userSnapshot["nickname"],
           imageUrl: Uri.parse(userSnapshot["imageurl"]),
-          title: "shared by" + userSnapshot["nickname"]),
+          title: "shared by ${userSnapshot["nickname"]}"),
     );
 
     if (short) {
