@@ -5,7 +5,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 class MongoDB {
   static String database = "events";
   static String mongoose =
-      "mongodb+srv://rultimatrix:JP0upaXwDvr14Rpp@visitcounter.rxind.mongodb.net/$database?retryWrites=true&w=majority"; // mongoose url
+      "mongodb+srv://[Your Key].rxind.mongodb.net/$database?retryWrites=true&w=majority"; // mongoose url
 
   String collection = "attendees"; // collection name
   static var db; // create db instance
