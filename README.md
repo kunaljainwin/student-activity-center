@@ -30,6 +30,7 @@
 - [System Requirements](#system)
 - [Technology Stack](#tech_stack)
 - [Contributors](#authors)
+- [Getting started](https://github.com/kunaljainwin/student-activity-center/blob/0bbdadcdfac462f64271c3d04ddbf1fd624eabcc/recepie.md)
 - [Acknowledgments](#acknowledgments)
 <!-- - [Dependencies / Limitations](#limitations) -->
 <!-- - [Future Scope](#future_scope) -->
