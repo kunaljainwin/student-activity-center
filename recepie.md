@@ -1,4 +1,4 @@
-## What Firebase features are implemented?
+<!-- ## What Firebase features are implemented?
 1. Firebase Authentication
     - Email based sign up/in
     - Google Sign in
@@ -24,7 +24,7 @@
 15. Flutter Auth buttons
 16. User's profile management
 17. Android release signing config
-
+ -->
 ## Getting Started
 1. Cloning the repository:
 
