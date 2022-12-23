@@ -1,4 +1,4 @@
-Inspired from (https://github.com/lohanidamodar/flutter_firebase_starter)
+# Inspired from (https://github.com/lohanidamodar/flutter_firebase_starter)
 # users document schema
 ```json
 
