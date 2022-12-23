@@ -51,6 +51,26 @@ How to start your project based on this.
 4. This will generated the required arb file. You just need to update it with your key-value pairs
 5. Also check the documentation of the respective tools
 
+## Configuration Steps
+1. Cloning the repository:
+
+```
+$ git clone https://github.com/ahmedgulabkhan/GroupChatApp.git
+```
+
+2. Open the project and install dependencies (using terminal):
+
+```
+$ cd GroupChatApp
+$ flutter pub get
+```
+This installs all the required dependencies like cloud_firestore, shared_preferences, flutter_spinkit etc...
+
+3. Make an android project on your firebase account, follow the mentioned steps and you're good to go.
+
+4. Now run the app on your connected device (using terminal):
+
+`$ flutter run`
 
 ## Contribution
 Contribution (suggestions, issues, feature request, pull requests) are highly welcome. Also looking for help in making it testable by adding unit, widget and integration tests.
