@@ -18,8 +18,7 @@
     <br> 
 </p>
 
-
-#  [App link](https://drive.google.com/file/d/1nGWsXw69W-nzGJI8fhhkfcJb0dM5LCTr/view?usp=sharing)
+#  [App link](https://appdistribution.firebase.dev/i/fe64b0480cd86b2e)
 
 ## 📝 Table of Contents
 - [Problem Statement](#problem_statement)
