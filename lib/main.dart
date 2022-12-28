@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/route_manager.dart';
-import 'package:samadhyan/Services/mongo.dart';
 
 import 'package:samadhyan/widgets/login_helpers.dart';
 
@@ -29,7 +28,7 @@ void main() async {
 Future<void> initializeApp() async {
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  await MongoDB.connect();
+  // await MongoDB.connect();
   await Firebase.initializeApp();
   // await RemoteConfigService().initialize();
   // RemoteConfigService().showMainBanner

@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:samadhyan/Utilities/launch_a_url.dart';
 import 'package:samadhyan/constants.dart';
+
 
 Future<User?> signInWithGoogle() async {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -116,6 +118,7 @@ Future<void> signOut() async {
   } catch (e) {
     debugPrint(e.toString());
   }
+  launchAUrl("https://login.microsoftonline.com/common/oauth2/logout?");
   FirebaseAuth.instance.signOut();
   Fluttertoast.showToast(
       msg: "Now you can use another account", timeInSecForIosWeb: 1);
