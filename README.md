@@ -162,9 +162,9 @@ Add notes about how to use the system. -->
 - [Cloud firestore](https://firebase.google.com/docs/firestore) - Database 
   
 ## ✍️ Authors <a name = "authors"></a>
-- [@kunal jain](https://github.com/kunaljainwin) - Idea & Initial work
+[@kunal jain](https://github.com/kunaljainwin) - Idea & Initial work
 
- [Refer this if you want to be a contributor ](https://github.com/kunaljainwin/student-activity-center/blob/4c16aca33d45ecaa343fd6beb8fd9ba91d2c249f/recepie.md)
+# [Refer this if you want to be a contributor ](https://github.com/kunaljainwin/student-activity-center/blob/4c16aca33d45ecaa343fd6beb8fd9ba91d2c249f/recepie.md)
 
 See also the list of [contributors](https://github.com//kunaljainwin/student-activity-center/contributors) 
 who participated in this project.
