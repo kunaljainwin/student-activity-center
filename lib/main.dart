@@ -35,10 +35,18 @@ Future<void> initializeApp() async {
   //     ? print("Banner is on")
   //     : print("Banner is off");
   FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.instance;
+  firebaseAppCheck.activate(androidDebugProvider: true);
+  firebaseAppCheck.getToken().then((value) {
+    print(value);
+  });
 
-  firebaseAppCheck.activate();
-  firebaseAppCheck.getToken();
-  firebaseAppCheck.setTokenAutoRefreshEnabled(true);
+  // firebaseAppCheck.installAppCheckProviderFactory(
+  //     PlayIntegrityAppCheckProviderFactory.getInstance());
+  // FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.instance;
+
+  // firebaseAppCheck.activate();
+  // firebaseAppCheck.getToken();
+  // firebaseAppCheck.setTokenAutoRefreshEnabled(true);
   kIsWeb ? null : FirebaseMessaging.onBackgroundMessage(_messageHandler);
 
   // Processing of Push Notifications

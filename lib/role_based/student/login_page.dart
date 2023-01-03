@@ -46,24 +46,26 @@ class LoginPage extends StatelessWidget {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.3,
                 ),
-                // ElevatedButton.icon(
-                //     onPressed: () async {
-                //       try {
-                //         await signInWithGoogle();
-                //       } catch (e) {
-                //         Fluttertoast.showToast(msg: e.toString());
-                //       }
-                //     },
-                //     style: ElevatedButton.styleFrom(primary: Colors.white),
-                //     icon: SizedBox(
-                //         height: 30,
-                //         child: OptimizedCacheImage(
-                //             imageUrl:
-                //                 'http://pngimg.com/uploads/google/google_PNG19635.png')),
-                //     label: Text(
-                //       "  Sign in with Google",
-                //       style: TextStyle(color: Colors.black),
-                //     )),
+            devMode?
+                ElevatedButton.icon(
+                  
+                    onPressed: () async {
+                      try {
+                        await signInWithGoogle();
+                      } catch (e) {
+                        Fluttertoast.showToast(msg: e.toString());
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(primary: Colors.white),
+                    icon: SizedBox(
+                        height: 30,
+                        child: OptimizedCacheImage(
+                            imageUrl:
+                                'http://pngimg.com/uploads/google/google_PNG19635.png')),
+                    label: Text(
+                      "  Sign in with Google",
+                      style: TextStyle(color: Colors.black),
+                    )):SizedBox.shrink(),
                 ActionChip(
                   onPressed: () async {
                     await signInWithMicrosoft();

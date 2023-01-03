@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 const String appName = "APP_NAME";
 num errorDistance = 10;
-bool devMode = false;
+bool devMode = true;
 bool subscription = false;
 String userEmail = "";
 // String userReferencePath = "";

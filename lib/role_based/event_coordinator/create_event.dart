@@ -195,10 +195,10 @@ class _CreateEventState extends State<CreateEvent> {
                                     color: Colors.blue),
                               ),
                             ),
-                          ),
+                          ),                          
                           ActionChip(
-                              label: Text("Change"),
-                              avatar: Icon(Icons.refresh),
+                              label:const Text("Change"),
+                              avatar:const Icon(Icons.refresh),
                               onPressed: () async {
                                 eventPosterLink =
                                     await pickEventPoster(context);

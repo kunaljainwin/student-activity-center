@@ -6,7 +6,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:samadhyan/Utilities/launch_a_url.dart';
 import 'package:samadhyan/constants.dart';
 
-
 Future<User?> signInWithGoogle() async {
   FirebaseAuth auth = FirebaseAuth.instance;
   User? user;
@@ -69,12 +68,19 @@ class AddUser {
         .doc(userEmail)
         .get();
     if (result.exists == false) {
-      num rollNumber = int.parse(userEmail.substring(2, userEmail.length));
-      String branch = userEmail.substring(0, 2);
+      num rollNumber =
+          int.tryParse(userEmail.substring(2, userEmail.length)) ?? 0;
+      String branch = rollNumber==0?userEmail: userEmail.substring(0, 2);
 
       // Update data to server if new user
       Timestamp t = Timestamp.now();
-      bool isStudent = useR.email!.contains(RegExp(r'[0-9]'));
+      bool isStudent = true;
+
+      try {
+        isStudent = useR.email!.contains(RegExp(r'[0-9]'));
+      } catch (e) {
+        isStudent = false;
+      }
       await FirebaseFirestore.instance.collection('users').doc(userEmail).set(
         {
           'rank': isStudent ? 3 : 1,
