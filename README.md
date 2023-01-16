@@ -59,6 +59,7 @@
 - [ ] 5.) we provide Basic information of registered candiate to the event organizers so that they can grow their community and look for feedback .
 
 ##  Future scopes <a name = "future"></a>
+- Usefulness in evaluating DECA
 - Open events 
 - Rewards
 - Giveaway events
