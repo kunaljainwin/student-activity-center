@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart';
@@ -96,25 +97,30 @@ class ExcelData {
     }
 
     // Saving the file
-    late File file;
-    var directory = await getApplicationDocumentsDirectory();
-    List<int>? fileBytes = excel.save();
-    //stopwatch.reset();
-    // Directory(directory!.path + '/' + 'dir').create(recursive: true)
-// The created directory is returned as a Future.
-    //   .then((Directory director) {
-    // print('Path of New Dir: ' + director.path);
-    // if (fileBytes != null) {
-    file = await File("${directory.path}/$eventName.xlsx")
-        .writeAsBytes(fileBytes!);
-    // debugPrint(file.path);
-    // file.open();
-    var o = await OpenFile.open(file.path);
-    if (o.type == ResultType.done) {
-      Fluttertoast.showToast(msg: "File saved at ${directory.path}");
+    if (kIsWeb) {
+      excel.save(fileName: "$eventName.xlsx"); 
     } else {
-      Fluttertoast.showToast(msg: "File not saved");
+      late File file;
+      var directory = await getApplicationDocumentsDirectory();
+      List<int>? fileBytes = excel.save();
+      //stopwatch.reset();
+      // Directory(directory!.path + '/' + 'dir').create(recursive: true)
+// The created directory is returned as a Future.
+      //   .then((Directory director) {
+      // print('Path of New Dir: ' + director.path);
+      // if (fileBytes != null) {
+      file = await File("${directory.path}/$eventName.xlsx")
+          .writeAsBytes(fileBytes!);
+      // debugPrint(file.path);
+      // file.open();
+      var o = await OpenFile.open(file.path);
+      if (o.type == ResultType.done) {
+        Fluttertoast.showToast(msg: "File saved at ${directory.path}");
+      } else {
+        Fluttertoast.showToast(msg: "File not saved");
+      }
     }
+
     // }
 
     // });

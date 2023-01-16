@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:samadhyan/constants.dart';
-import 'package:samadhyan/role_based/Student/event_details.dart';
+import 'package:samadhyan/role_based/common/event_details.dart';
+
 import 'package:samadhyan/widgets/login_helpers.dart';
 
 class DynamicLinks {
@@ -39,11 +41,13 @@ class DynamicLinks {
   static Future<String> buildDynamicLink(
       {bool short = true,
       required DocumentSnapshot<Object?> documentSnapshot}) async {
+    Uri fallbackUrl =
+        Uri.tryParse("https://visitcounter-fef16.web.app") ?? Uri.parse(url);
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: url,
       link: Uri.parse('$url/event?ref=${documentSnapshot.reference.path}'),
-      androidParameters: const AndroidParameters(
-        // fallbackUrl: Uri.parse("https://artstick-2021.web.app"),
+      androidParameters: AndroidParameters(
+        fallbackUrl: fallbackUrl,
         packageName: "com.example.visitcounter",
         minimumVersion: 0,
       ),
@@ -57,7 +61,7 @@ class DynamicLinks {
           title: documentSnapshot["title"]),
     );
 
-    if (short) {
+    if (short && !kIsWeb) {
       final ShortDynamicLink dynamicUrl = await FirebaseDynamicLinks.instance
           .buildShortLink(parameters,
               shortLinkType: ShortDynamicLinkType.unguessable);

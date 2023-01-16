@@ -4,6 +4,8 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
+import 'package:samadhyan/widgets/round_indicator.dart';
+import 'package:sizer/sizer.dart';
 
 import 'event_details.dart';
 
@@ -21,16 +23,24 @@ class _EventCoordinatorEventsState extends State<EventCoordinatorEvents>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 1);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Events"),
-        backgroundColor: Colors.orangeAccent,
+        title: const Text("My Events"),
         bottom: TabBar(
+            labelPadding: EdgeInsets.symmetric(horizontal: 10.w),
+            labelColor: Colors.purple,
+            indicator: RoundedTabIndicator(
+                color: Colors.purple, radius: 20, width: 170, bottomMargin: 8),
+            indicatorWeight: 4,
+            indicatorSize: TabBarIndicatorSize.label,
+            isScrollable: true,
+            indicatorColor: Colors.blue,
+            automaticIndicatorColorAdjustment: true,
             controller: _tabController,
             // labelStyle: TextStyle(fontSize: 12, color: Colors.purple),
             // indicatorSize: TabBarIndicatorSize.label,
@@ -56,7 +66,6 @@ class _EventCoordinatorEventsState extends State<EventCoordinatorEvents>
             controller: _tabController,
             children: [
               PaginateFirestore(
-                  isLive: true,
                   itemBuilder: (context, listSnapshot, index) {
                     return InkWell(
                         key: Key(index.toString()),
@@ -69,10 +78,10 @@ class _EventCoordinatorEventsState extends State<EventCoordinatorEvents>
                   },
                   query: FirebaseFirestore.instance
                       .collection("contests")
-                      .where("endTime", isLessThan: DateTime.now()),
+                      .where("endTime", isLessThan: Timestamp.now())
+                      .orderBy("endTime"),
                   itemBuilderType: PaginateBuilderType.listView),
               PaginateFirestore(
-                  isLive: true,
                   itemBuilder: (context, listSnapshot, index) {
                     return InkWell(
                         key: Key(index.toString()),
@@ -85,7 +94,8 @@ class _EventCoordinatorEventsState extends State<EventCoordinatorEvents>
                   },
                   query: FirebaseFirestore.instance
                       .collection("contests")
-                      .where("endTime", isGreaterThanOrEqualTo: DateTime.now()),
+                      .where("endTime", isGreaterThanOrEqualTo: DateTime.now())
+                      .orderBy("endTime"),
                   itemBuilderType: PaginateBuilderType.listView),
             ],
           )),

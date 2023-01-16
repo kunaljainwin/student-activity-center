@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -9,9 +10,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:optimized_cached_image/optimized_cached_image.dart';
+import 'package:samadhyan/role_based/common/drawer.dart';
 
 import 'package:samadhyan/widgets/title_box.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../constants.dart';
 
@@ -35,7 +38,7 @@ class _CreateEventState extends State<CreateEvent> {
   static String eventCoordinatorPassword = "";
   static String announcement = "";
   static String importantNote = "";
-  static String eventPosterLink = "";
+  static String eventPosterLink = urlLogo;
   static String clubName = "";
   static String socialMediaLinkForUpdates = "";
 
@@ -61,26 +64,47 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   Future<String> pickEventPoster(BuildContext context) async {
-    final poster = await FilePicker.platform.pickFiles(type: FileType.image);
-    if (poster == null) {
-    } else {
-      try {
-        return await uploadArt(File(poster.files.single.path!));
-      } catch (e) {
-        Fluttertoast.showToast(msg: e.toString());
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.image,
+          withData: true,
+          allowCompression: true,
+          lockParentWindow: true);
+
+      if (result != null) {
+        _fileBytes = result.files.first.bytes!;
+        if (_fileBytes != null) {
+          _fileName = result.files.first.name;
+          isImageSelected = true;
+        } else {
+          // fail to convert files to bytes toast message
+          Fluttertoast.showToast(msg: "File is empty");
+        }
       }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+      debugPrint(e.toString());
     }
-    return "";
+
+    return urlLogo;
   }
 
-  Future uploadArt(File poster) async {
+  Future uploadArt(Uint8List poster, String fileName) async {
     Reference reference = FirebaseStorage.instance
         .ref()
-        .child('files/$userEmail/${poster.path}/${TimeOfDay.now()}');
-    UploadTask sampleArtUploadTask = reference.putFile(poster);
+        .child('files/$userEmail/$fileName/${TimeOfDay.now()}');
+    UploadTask sampleArtUploadTask = reference.putData(poster);
     String url = await (await sampleArtUploadTask).ref.getDownloadURL();
     return url;
   }
+  //  Future uploadArt(File poster) async {
+  //   Reference reference = FirebaseStorage.instance
+  //       .ref()
+  //       .child('files/$userEmail/${poster.path}/${TimeOfDay.now()}');
+  //   UploadTask sampleArtUploadTask = reference.putFile(poster);
+  //   String url = await (await sampleArtUploadTask).ref.getDownloadURL();
+  //   return url;
+  // }
 
   static Future submitData() async {
     // send to server
@@ -129,6 +153,9 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool isImageSelected = false;
+  late Uint8List _fileBytes;
+  late String _fileName;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,25 +196,50 @@ class _CreateEventState extends State<CreateEvent> {
               physics: const BouncingScrollPhysics(),
               children: [
                 titleBox("Event Poster"),
-                eventPosterLink.isEmpty
-                    ? ActionChip(
-                        label: Text("Change"),
-                        avatar: Icon(Icons.refresh),
-                        onPressed: () async {
-                          eventPosterLink = await pickEventPoster(context);
-                          setState(() {});
-                        })
+                //edit
+                //remove
+                isImageSelected
+                    ? Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          InkWell(
+                              onTap: () async {},
+                              child: Image.memory(
+                                _fileBytes,
+                                errorBuilder: ((context, error, stackTrace) =>
+                                    const Text("Error loading image")),
+                                frameBuilder: ((context, child, frame,
+                                        wasSynchronouslyLoaded) =>
+                                    frame == null
+                                        ? const Center(
+                                            child:
+                                                const CircularProgressIndicator(),
+                                          )
+                                        : child),
+                              )),
+                          ActionChip(
+                              label: const Text("Change"),
+                              avatar: const Icon(Icons.refresh),
+                              onPressed: () async {
+                                eventPosterLink =
+                                    await pickEventPoster(context);
+                                setState(() {});
+                              })
+                        ],
+                      )
                     : Stack(
                         alignment: Alignment.center,
                         children: [
                           InkWell(
                             onTap: () async {
-                              eventPosterLink = await pickEventPoster(context);
-                              setState(() {});
+                              // eventPosterLink = await pickEventPoster(context);
+                              // setState(() {});
                             },
                             child: OptimizedCacheImage(
                               useOldImageOnUrlChange: true,
                               imageUrl: eventPosterLink,
+                              imageRenderMethodForWeb:
+                                  ImageRenderMethodForWeb.HttpGet,
                               progressIndicatorBuilder:
                                   (context, url, downloadProgress) => Center(
                                 child: CircularProgressIndicator(
@@ -195,10 +247,10 @@ class _CreateEventState extends State<CreateEvent> {
                                     color: Colors.blue),
                               ),
                             ),
-                          ),                          
+                          ),
                           ActionChip(
-                              label:const Text("Change"),
-                              avatar:const Icon(Icons.refresh),
+                              label: const Text("Edit"),
+                              avatar: const Icon(Icons.edit_rounded),
                               onPressed: () async {
                                 eventPosterLink =
                                     await pickEventPoster(context);
@@ -299,9 +351,35 @@ class _CreateEventState extends State<CreateEvent> {
                   ),
                 ),
                 titleBox("Ending Date and Time"),
-                saveTime(context, (dt) {
-                  endTime = dt;
-                }),
+                InkWell(
+                  onTap: () {
+                    showCupertinoDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            contentPadding: EdgeInsets.zero,
+                            content: CupertinoDatePicker(
+                              onDateTimeChanged: (DateTime dt) {
+                                setState(() {
+                                  endTime = dt;
+                                });
+                              },
+                              initialDateTime: DateTime.now(),
+                            ),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                  child: Text("Done"))
+                            ],
+                          );
+                        });
+                  },
+                  child: Text(
+                    DateFormat().format(endTime).toString(),
+                  ),
+                ),
                 titleBox("Announcements"),
                 TextFormField(
                   initialValue: announcement,
@@ -448,7 +526,7 @@ class _CreateEventState extends State<CreateEvent> {
 
                 ActionChip(
                   backgroundColor: Colors.black,
-                  onPressed: () {
+                  onPressed: () async {
                     // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
                       // If the form is valid, display a snackbar. In the real world,
@@ -456,9 +534,26 @@ class _CreateEventState extends State<CreateEvent> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Wait Processing Data')),
                       );
-                      submitData().whenComplete(() {
-                        Get.back();
-                      });
+                      // upload event poster
+
+                      try {
+                        // Upload file
+
+                        if (isImageSelected) {
+                          eventPosterLink =
+                              await uploadArt(_fileBytes, _fileName);
+                          Fluttertoast.showToast(msg: "Poster Uploaded");
+                        }
+                        submitData().whenComplete(() {
+                          Fluttertoast.showToast(
+                              msg: "Event Successfully Added",
+                              backgroundColor: Colors.green);
+                          Get.back();
+                        });
+                      } on FirebaseException catch (e) {
+                        // e.g, e.code == 'canceled'
+                        Fluttertoast.showToast(msg: e.toString());
+                      }
                     }
                   },
                   label: const Text(

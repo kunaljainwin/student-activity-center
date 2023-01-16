@@ -9,10 +9,11 @@ import 'package:samadhyan/Utilities/send_email.dart';
 import 'package:samadhyan/constants.dart';
 import 'package:samadhyan/main.dart';
 import 'package:samadhyan/role_based/admin/dashboard.dart';
+import 'package:samadhyan/role_based/common/profile_page.dart';
 import 'package:samadhyan/role_based/event_coordinator/dashboard.dart';
 import 'package:samadhyan/role_based/faculty/dashboard.dart';
-import 'package:samadhyan/role_based/student/profile_page.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
+import 'package:sizer/sizer.dart';
 
 // https://student-activity-hub.flycricket.io/
 String userDataPrivacyPolicy =
@@ -43,30 +44,45 @@ class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      width: 270,
+      backgroundColor: Color.fromARGB(255, 239, 245, 255),
       child: ListView(
         primary: true,
         padding: EdgeInsets.zero,
         shrinkWrap: true,
         children: [
-          UserAccountsDrawerHeader(
-            arrowColor: Colors.grey,
-            accountName: null,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: OptimizedCacheImageProvider(urlLogo))),
-            accountEmail: null,
+          Container(
+            height: 3.h,
           ),
-          ListTile(
-            leading: const Icon(Icons.account_box),
+          OptimizedCacheImage(
+            imageUrl: urlLogo,
+            imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
+            fit: BoxFit.fitWidth,
+          ),
+          // UserAccountsDrawerHeader(
+          //   arrowColor: Colors.grey,
+          //   accountName: null,
+          //   decoration: BoxDecoration(
+          //       image: DecorationImage(
+          //     image:
+          //     fit: BoxFit.fitWidth,
+          //       )
+          //   ),
+          //   accountEmail: null,
+          // ),
+          !devMode
+              ? SizedBox.shrink()
+              : ListTile(
+                  leading: const Icon(Icons.account_box),
 
-            subtitle: const Text("Details of your account"),
-            onTap: () async {
-              analytics.logEvent(name: "profile_page_opened");
-              Get.to(() => const ProfilePage());
-            },
-            // leading: Icon(Icons.account_circle),
-            title: const Text("Profile", overflow: TextOverflow.fade),
-          ),
+                  subtitle: const Text("Details of your account"),
+                  onTap: () async {
+                    analytics.logEvent(name: "profile_page_opened");
+                    Get.to(() => const ProfilePage());
+                  },
+                  // leading: Icon(Icons.account_circle),
+                  title: const Text("Profile", overflow: TextOverflow.fade),
+                ),
           userRank == 0
               ? ListTile(
                   leading: const Icon(Icons.admin_panel_settings),
@@ -105,6 +121,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       overflow: TextOverflow.fade),
                 )
               : Container(),
+          Divider(),
           devMode
               ? ExpansionTile(
                   title: const Text("Legal pages", overflow: TextOverflow.fade),

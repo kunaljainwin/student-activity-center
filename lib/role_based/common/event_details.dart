@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:optimized_cached_image/optimized_cached_image.dart';
 
 import 'package:samadhyan/constants.dart';
-import 'package:samadhyan/Services/mongo.dart';
 import 'package:samadhyan/services/Firebase/dynamic_links_util.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
 
@@ -14,6 +13,7 @@ import 'package:samadhyan/widgets/view_image.dart';
 import 'dart:math' as math;
 
 import 'package:share_plus/share_plus.dart';
+import 'package:sizer/sizer.dart';
 
 class EventDetails extends StatelessWidget {
   const EventDetails({super.key, required this.event});
@@ -32,6 +32,53 @@ class EventDetails extends StatelessWidget {
     // .toList();
     var textStyleTitle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
     return Scaffold(
+      persistentFooterAlignment: AlignmentDirectional.center,
+      persistentFooterButtons: [
+        IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: Icon(Icons.arrow_back_ios)),
+        ActionChip(
+          backgroundColor: isRegistered ? Colors.grey : Colors.blue,
+          onPressed: isRegistered
+              ? null
+              : () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return dialogForRegisterNow(context);
+                      });
+                },
+          tooltip: "Register Now",
+          label: isRegistered
+              ? CountdownTimer(
+                  endTime: endTime,
+                )
+              : const Text(
+                  "Register Now",
+                  textScaleFactor: 1.3,
+                  style: TextStyle(color: Colors.white),
+                ),
+        ),
+        IconButton(
+          onPressed: () async {
+            String eventUrl =
+                await DynamicLinks.buildDynamicLink(documentSnapshot: event);
+            Share.share(
+                "Hey, I am inviting you to join this event. Please join this event by clicking on the link below. \n\n$eventUrl",
+                subject: "Join this event",
+                sharePositionOrigin: Rect.fromLTWH(0, 0, 0, 0));
+          },
+          icon: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(math.pi),
+              child: const Icon(
+                Icons.reply_outlined,
+                size: 30,
+              )),
+        ),
+      ],
       // extendBodyBehindAppBar: true,
       // appBar: AppBar(
       //   // leadingWidth: 20,
@@ -49,178 +96,130 @@ class EventDetails extends StatelessWidget {
       //   toolbarHeight: 40,
       //   // backgroundColor: Colors.transparent,
       // ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      body: ListView(
+        padding: EdgeInsets.zero,
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.90,
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Get.to(
-                        () => PhotoViewer(imagePath: event['eventPosterLink']));
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                    ),
-                    height: MediaQuery.of(context).size.height * 0.50,
-                    child: OptimizedCacheImage(
-                      imageUrl: event['eventPosterLink'],
-                      fit: BoxFit.fill,
-                      placeholder: (context, url) => const Center(
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                    ),
-                  ),
+          InkWell(
+            onTap: () {
+              Get.to(() => PhotoViewer(imagePath: event['eventPosterLink']));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+              ),
+              height: 50.h,
+              child: OptimizedCacheImage(
+                imageUrl: event['eventPosterLink'],
+                imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => const Center(
+                  child: Center(child: CircularProgressIndicator()),
                 ),
+              ),
+            ),
+          ),
 
-                Container(
-                  height: 60,
-                  padding: EdgeInsets.all(10),
-                  child: ListView(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      Text(event['title'], style: textStyleTitle),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          Event e = Event(
-                            title: event['title'],
-                            description: event['description'],
-                            location: event['location'].toString(),
-                            startDate: event["startTime"].toDate(),
-                            endDate: event["endTime"].toDate(),
-                          );
+          Container(
+            height: 50,
+            padding: EdgeInsets.only(top: 10, left: 10),
+            child: ListView(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              children: [
+                Text(
+                  event['title'],
+                  style: textStyleTitle,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                IconButton(
+                  onPressed: () {
+                    Event e = Event(
+                      title: event['title'],
+                      description: event['description'],
+                      location: event['location'].toString(),
+                      startDate: event["startTime"].toDate(),
+                      endDate: event["endTime"].toDate(),
+                    );
 
-                          Add2Calendar.addEvent2Cal(e);
-                        },
-                        enableFeedback: true,
-                        icon: Row(
-                          children: const [
-                            Icon(Icons.edit_calendar),
-                            Text("   Add to Calendar")
-                          ],
-                        ),
-                      ),
-                      // OutlinedButton(
-                      //     onPressed: () {},
-                      //     child: Text(
-                      //       "Frequently asked questions",
-                      //     )),
+                    Add2Calendar.addEvent2Cal(e);
+                  },
+                  enableFeedback: true,
+                  icon: Row(
+                    children: const [
+                      Icon(Icons.edit_calendar),
+                      Text("   Add to Calendar")
                     ],
                   ),
                 ),
-
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                      "Register for the contest in advance and You can fill out the contact information at the registration step."),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-
-                const ListTile(
-                  leading: Icon(
-                    Icons.label_important,
-                    color: Colors.teal,
-                  ),
-                  title: Text("Important Note", textScaleFactor: 1.3),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Text(event["importantNote"]),
-                ),
-                // Column(crossAxisAlignment: CrossAxisAlignment.start, children: notes),
-                const SizedBox(
-                  height: 10,
-                ),
-                const ListTile(
-                  leading: Icon(
-                    Icons.announcement_outlined,
-                    color: Colors.amber,
-                  ),
-                  title: Text("Announcement", textScaleFactor: 1.3),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Text(event['announcement']),
-                ),
-
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Text(
-                    "Users must register to participate.\nWe hope you will enjoy this event!",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
+                // OutlinedButton(
+                //     onPressed: () {},
+                //     child: Text(
+                //       "Frequently asked questions",
+                //     )),
               ],
             ),
           ),
-          const Divider(),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: Icon(Icons.arrow_back_ios)),
-                ActionChip(
-                  backgroundColor: isRegistered ? Colors.grey : Colors.blue,
-                  onPressed: isRegistered
-                      ? null
-                      : () {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return dialogForRegisterNow(context);
-                              });
-                        },
-                  tooltip: "Register Now",
-                  label: isRegistered
-                      ? CountdownTimer(
-                          endTime: endTime,
-                        )
-                      : const Text(
-                          "Register Now",
-                          textScaleFactor: 1.3,
-                          style: TextStyle(
-                              color: Colors.white, fontFamily: 'Montserrat'),
-                        ),
+                Icon(Icons.place),
+                SizedBox(
+                  width: 5,
                 ),
-                IconButton(
-                  onPressed: () async {
-                    String eventUrl = await DynamicLinks.buildDynamicLink(
-                        documentSnapshot: event);
-                    Share.share(
-                        "Hey, I am inviting you to join this event. Please join this event by clicking on the link below. \n\n$eventUrl",
-                        subject: "Join this event",
-                        sharePositionOrigin: Rect.fromLTWH(0, 0, 0, 0));
-                  },
-                  icon: Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationY(math.pi),
-                      child: const Icon(
-                        Icons.reply_outlined,
-                        size: 30,
-                      )),
-                ),
+                Text(event["location"])
               ],
             ),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+                "Register for the contest in advance and You can fill out the contact information at the registration step."),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+
+          const ListTile(
+            leading: Icon(
+              Icons.label_important,
+              color: Colors.teal,
+            ),
+            title: Text("Important Note", textScaleFactor: 1.3),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Text(event["importantNote"]),
+          ),
+          // Column(crossAxisAlignment: CrossAxisAlignment.start, children: notes),
+          const SizedBox(
+            height: 10,
+          ),
+          const ListTile(
+            leading: Icon(
+              Icons.announcement_outlined,
+              color: Colors.amber,
+            ),
+            title: Text("Announcement", textScaleFactor: 1.3),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Text(event['announcement']),
+          ),
+
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 25.0),
+            child: Text(
+              "Users must register to participate.\nWe hope you will enjoy this event!",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          SizedBox(
+            height: 20,
           ),
         ],
       ),
@@ -289,6 +288,7 @@ class EventDetails extends StatelessWidget {
 
     return Dialog(
       child: Container(
+          width: 100.w <= 800 ? null : 40.w,
           padding: EdgeInsets.all(8),
           child: SingleChildScrollView(
             child: Column(

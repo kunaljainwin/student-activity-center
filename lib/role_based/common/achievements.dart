@@ -10,95 +10,32 @@ import 'package:samadhyan/widgets/login_helpers.dart';
 class AchievementsPage extends StatelessWidget {
   final DocumentSnapshot userData;
   final num level;
-  final num totalVisits;
   const AchievementsPage(
       {Key? key,
       required this.userData,
       required this.level,
-      required this.totalVisits})
+})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Achievements"),
-        // bottom: TabBar(tabs: [Tab(text: "Stats",),Tab(text: "Badges")]),
-        // bottom: TabBar(tabs: [
-        //   Tab(
-        //     text: "Stats",
-        //   ),
-        //   Tab(
-        //     text: "Badges",
-        //   )
-        // ]),
-      ),
-      body: !devMode
-          ? ListView(padding: const EdgeInsets.all(18), children: [
-              PaginateFirestore(
-                  shrinkWrap: true,
-                  isLive: true,
-                  header: SliverToBoxAdapter(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        CircleAvatar(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.tealAccent,
-                          // backgroundImage: const CachedNetworkImageProvider(
-                          //   "https://image.shutterstock.com/image-vector/light-green-vector-abstract-mosaic-600w-1033988263.jpg",
-                          // ),
-                          child: Text(
-                            level.toString(),
-                            textScaleFactor: 1.5,
-                          ),
-                        ),
-                        CircularProgressIndicator.adaptive(
-                          value: level / 20,
-                        ),
-                      ],
-                    ),
-                  ),
-                  padding: EdgeInsets.all(8),
-                  itemBuilder: (context, snapshot, index) {
-                    return InkWell(
-                      onTap: () async {
-                        // var a = await PaletteGenerator.fromImageProvider(
-                        //   CachedNetworkImageProvider(
-                        //       snapshot[index]["imageurl"]),
-                        // );
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return BadgeCard(
-                                  badgeSnapshot: snapshot[index],
-                                  color: Colors.lightGreen.shade100
-                                  //  a.dominantColor?.color ?? Colors.white,
-                                  );
-                            });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SvgPicture.network(
-                          snapshot[index]["imageurl"],
-                          placeholderBuilder: (BuildContext context) =>
-                              const CircularProgressIndicator(),
-                        ),
-                      ),
-                    );
-                  },
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4),
-                  bottomLoader: Text("Hang on"),
-                  query: FirebaseFirestore.instance.collection("badges"),
-                  itemBuilderType: PaginateBuilderType.gridView),
-
-              SizedBox(
-                height: 30,
-                child: Divider(
-                  thickness: 1,
-                ),
-              ),
+        appBar: AppBar(
+          title: Text("Achievements"),
+          // bottom: TabBar(tabs: [Tab(text: "Stats",),Tab(text: "Badges")]),
+          // bottom: TabBar(tabs: [
+          //   Tab(
+          //     text: "Stats",
+          //   ),
+          //   Tab(
+          //     text: "Badges",
+          //   )
+          // ]),
+        ),
+        body: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(18),
+            children: [
               Container(
                 padding: EdgeInsets.zero,
                 height: 400,
@@ -209,6 +146,78 @@ class AchievementsPage extends StatelessWidget {
                   ],
                 ),
               ),
+              SizedBox(
+                height: 30,
+                child: Divider(
+                  thickness: 1,
+                ),
+              ),
+              !devMode
+                  ? PaginateFirestore(
+                      shrinkWrap: true,
+                      isLive: true,
+                      header: SliverToBoxAdapter(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            CircleAvatar(
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.tealAccent,
+                              // backgroundImage: const CachedNetworkImageProvider(
+                              //   "https://image.shutterstock.com/image-vector/light-green-vector-abstract-mosaic-600w-1033988263.jpg",
+                              // ),
+                              child: Text(
+                                level.toString(),
+                                textScaleFactor: 1.5,
+                              ),
+                            ),
+                            CircularProgressIndicator.adaptive(
+                              value: level / 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                      padding: EdgeInsets.all(8),
+                      itemBuilder: (context, snapshot, index) {
+                        return InkWell(
+                          onTap: () async {
+                            // var a = await PaletteGenerator.fromImageProvider(
+                            //   CachedNetworkImageProvider(
+                            //       snapshot[index]["imageurl"]),
+                            // );
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return BadgeCard(
+                                      badgeSnapshot: snapshot[index],
+                                      color: Colors.lightGreen.shade100
+                                      //  a.dominantColor?.color ?? Colors.white,
+                                      );
+                                });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SvgPicture.network(
+                              snapshot[index]["imageurl"],
+                              placeholderBuilder: (BuildContext context) =>
+                                  const CircularProgressIndicator(),
+                            ),
+                          ),
+                        );
+                      },
+                      onEmpty: SizedBox(
+                        height: 0,
+                      ),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4),
+                      bottomLoader: Text("Hang on"),
+                      query: FirebaseFirestore.instance
+                          .collection("badges")
+                          .where("users", arrayContains: userData.id),
+                      itemBuilderType: PaginateBuilderType.gridView)
+                  : SizedBox(
+                      height: 0,
+                    ),
 
               // Text(
               //   "Badges",
@@ -217,13 +226,6 @@ class AchievementsPage extends StatelessWidget {
               // SizedBox(
               //   height: 20,
               // ),
-            ])
-          : Center(
-              child: Text(
-                "Coming Soon !",
-                textScaleFactor: 2,
-              ),
-            ),
-    );
+            ]));
   }
 }

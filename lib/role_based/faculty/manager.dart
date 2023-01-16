@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:samadhyan/constants.dart';
 import 'package:samadhyan/widgets/is_a.dart';
 

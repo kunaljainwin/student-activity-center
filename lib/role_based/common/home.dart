@@ -6,26 +6,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:samadhyan/constants.dart';
-import 'package:samadhyan/role_based/student/achievements.dart';
-import 'package:samadhyan/role_based/student/additional_info.dart';
-import 'package:samadhyan/role_based/student/drawer.dart';
-import 'package:samadhyan/role_based/student/event_details.dart';
-import 'package:samadhyan/role_based/student/events.dart';
-import 'package:samadhyan/role_based/student/login_page.dart';
-import 'package:optimized_cached_image/optimized_cached_image.dart';
+import 'package:samadhyan/role_based/common/achievements.dart';
+import 'package:samadhyan/role_based/common/additional_info.dart';
+import 'package:samadhyan/role_based/common/drawer.dart';
+import 'package:samadhyan/role_based/common/event_details.dart';
+import 'package:samadhyan/role_based/common/events.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:samadhyan/role_based/empty_screen.dart';
 import 'package:samadhyan/services/firebase/in_app_messaging.dart';
+import 'package:samadhyan/utilities/compute_level.dart';
 import 'package:samadhyan/utilities/is_profile_complete.dart';
+import 'package:samadhyan/widgets/grid_card.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
 import 'package:samadhyan/widgets/profile_widget.dart';
 import 'package:samadhyan/widgets/special_splash.dart';
 import 'package:samadhyan/Utilities/learn_more.dart';
-import 'package:samadhyan/Utilities/compute_level.dart';
 import 'package:samadhyan/services/Firebase/dynamic_links_util.dart'
     as dynamic_links_util;
+import 'package:sizer/sizer.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -95,6 +97,47 @@ class _MyHomePageState extends State<MyHomePage>
     super.dispose();
   }
 
+  final List<Map<String, Object>> _gridItems = [
+    {
+      "title": "Events",
+      "svg_icon": "lib/assets/event-icon.svg",
+      "color": Colors.blue,
+      "route": Events(
+        query: FirebaseFirestore.instance.collection("contests"),
+        title: 'Explore events',
+      ),
+    },
+    {
+      "title": "Achievements",
+      "svg_icon": "lib/assets/achievement-award-medal-icon.svg",
+      "color": Colors.green,
+      "route": AchievementsPage(userData: userSnapshot, level: Level.level),
+    },
+    {
+      "title": "My events",
+      "svg_icon": "lib/assets/event-calendar-icon.svg",
+      "color": Colors.red,
+      "route": Events(
+        query: FirebaseFirestore.instance
+            .collection("contests")
+            .where("registered", arrayContains: userEmail),
+        title: 'Registered for..',
+      ),
+    },
+    {
+      "title": "Notices",
+      "svg_icon": "lib/assets/notices-board-icon.svg",
+      "color": Colors.red,
+      "route": const EmptyScreen()
+    },
+    {
+      "title": "Suggestions",
+      "svg_icon": "lib/assets/made-in-india-icon.svg",
+      "color": Colors.red,
+      "route": const EmptyScreen()
+    },
+  ];
+
   // variables
   @override
   Widget build(BuildContext context) {
@@ -102,76 +145,114 @@ class _MyHomePageState extends State<MyHomePage>
         "https://firebasestorage.googleapis.com/v0/b/visitcounter-fef16.appspot.com/o/ezgif.com-gif-maker%20(1).jpg?alt=media&token=f6a09471-bbd3-4298-a694-7ef920d9a5b0";
 
     return Scaffold(
-        body: NestedScrollView(
-          controller: _scrollController,
-          floatHeaderSlivers: true,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              appbarMain(context),
-            ];
-          },
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                // titleBox("Registered events"),
-                PaginateFirestore(
-                    header: const SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 80,
-                      ),
+      body: NestedScrollView(
+        controller: _scrollController,
+        floatHeaderSlivers: true,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            appbarMain(context),
+          ];
+        },
+        body: GridView.count(
+          crossAxisCount: SizerUtil.deviceType == DeviceType.mobile
+              ? 2
+              : (100.w / 350).round(),
+          children: _gridItems
+              .map((e) => Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: GridCard(
+                      e: e,
                     ),
-                    scrollController: _scrollController,
-                    itemsPerPage: 2,
-                    onEmpty: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: OptimizedCacheImage(
-                                fit: BoxFit.fitWidth, imageUrl: imageUrl2),
-                          ),
-                          const Text(
-                            "No Events Found",
-                            textScaleFactor: 1.5,
-                          )
-                        ],
-                      ),
-                    ),
-                    shrinkWrap: true,
-                    isLive: true,
-                    itemBuilder: (context, listSnapshot, index) {
-                      return InkWell(
-                          child:
-                              cardBuilder(context, listSnapshot[index], index),
-                          onTap: () => Get.to(() => EventDetails(
-                                event: listSnapshot[index],
-                              )));
-                    },
-                    query: FirebaseFirestore.instance
-                        .collection("contests")
-                        .where("registered", arrayContains: userName),
-                    itemBuilderType: PaginateBuilderType.listView),
-              ],
-            ),
-          ),
+                  ))
+              .toList(),
         ),
-        drawer: const MyDrawer(),
-        bottomNavigationBar: babMain());
+        // body: SingleChildScrollView(
+        //   child: Column(
+        //     children: [
+        //       // titleBox("Registered events"),
+        //       PaginateFirestore(
+        //           header: const SliverToBoxAdapter(
+        //             child: SizedBox(
+        //               height: 80,
+        //             ),
+        //           ),
+        //           scrollController: _scrollController,
+        //           itemsPerPage: 2,
+        //           onEmpty: Padding(
+        //             padding: const EdgeInsets.all(8.0),
+        //             child: Column(
+        //               mainAxisAlignment: MainAxisAlignment.start,
+        //               children: [
+        //                 const SizedBox(
+        //                   height: 30,
+        //                 ),
+        //                 Padding(
+        //                     padding: EdgeInsets.symmetric(horizontal: 20.w),
+        //                     child: Image.asset("lib/assets/no_events.png")),
+        //                 const Text(
+        //                   "No Events Found",
+        //                   textScaleFactor: 1.5,
+        //                 )
+        //               ],
+        //             ),
+        //           ),
+        //           shrinkWrap: true,
+        //           isLive: true,
+        //           itemBuilder: (context, listSnapshot, index) {
+        //             return InkWell(
+        //                 child:
+        //                     cardBuilder(context, listSnapshot[index], index),
+        //                 onTap: () => Get.to(() => EventDetails(
+        //                       event: listSnapshot[index],
+        //                     )));
+        //           },
+        //           query: FirebaseFirestore.instance
+        //               .collection("contests")
+        //               .where("registered", arrayContains: userName),
+        //           itemBuilderType: PaginateBuilderType.listView),
+        //     ],
+        //   ),
+        // ),
+      ),
+      drawer: const MyDrawer(),
+      // bottomNavigationBar: babMain()
+    );
   }
 
   // local widgets
   SliverAppBar appbarMain(BuildContext context) {
     return SliverAppBar(
-      automaticallyImplyLeading: true,
+      automaticallyImplyLeading: false,
       // pinned: true,
+      leadingWidth: 180,
+      leading: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+        child: GestureDetector(
+          onTap: () => Scaffold.of(context).openDrawer(),
+          child: Container(
+            padding: EdgeInsets.zero,
+            decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(15)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: const [
+                Icon(Icons.menu),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  appName,
+                  textScaleFactor: 1.1,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       floating: true,
       snap: true,
-      expandedHeight: 180.0,
+      expandedHeight: 160.0,
       // snap: true,
       // stretch: false,
       // pinned: true,
@@ -182,32 +263,21 @@ class _MyHomePageState extends State<MyHomePage>
           AppBar(
             automaticallyImplyLeading: false,
             elevation: 0,
-            leadingWidth: 48,
-            centerTitle: true,
-            title: const Text(appName),
+            // centerTitle: true,
+            // title: const Text(appName),
             actions: [
               Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: isLoggedIn
-                    ? CircleAvatar(
-                        radius: 17,
-                        child: ProfileAvatar(
-                          level: Level.level,
-                        ),
-                      )
-                    : SplashContainer(
-                        wid: const Text(
-                          "Login",
-                          textScaleFactor: 1.8,
-                          style: TextStyle(color: Colors.black54),
-                        ),
-                        onTap: () => Get.to(() => const LoginPage()),
-                        splashRadius: 100),
-              )
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: CircleAvatar(
+                    radius: 17,
+                    child: ProfileAvatar(
+                      level: Level.level,
+                    ),
+                  ))
             ],
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: EdgeInsets.symmetric(horizontal: 6.w),
             child: Container(
               decoration: BoxDecoration(
                 color: const Color.fromRGBO(255, 255, 255, 1),
@@ -215,12 +285,8 @@ class _MyHomePageState extends State<MyHomePage>
                 borderRadius: BorderRadius.circular(10),
               ),
               child: ListTile(
-                // autofocus: true,
-                // enabled: true,
-                // enableFeedback: true,
                 onTap: () => Get.to(() => AchievementsPage(
                       level: Level.level,
-                      totalVisits: totalVisits,
                       userData: userSnapshot,
                     )),
                 leading: GestureDetector(
@@ -238,12 +304,14 @@ class _MyHomePageState extends State<MyHomePage>
                     ),
                   ),
                 ),
-                title: Text("Level ${Level.level.toString()}"),
+                title: Text(
+                  "Level ${Level.level.toString()}",
+                  textScaleFactor: 1.1,
+                ),
                 trailing: IconButton(
                     onPressed: () {},
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_forward_ios,
-                      size: 20,
                     )),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,21 +329,23 @@ class _MyHomePageState extends State<MyHomePage>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                            "${totalVisits - Level.before}/${Level.after} points"),
+                          "${totalVisits - Level.before}/${Level.after} points",
+                          softWrap: true,
+                          overflow: TextOverflow.clip,
+                        ),
                         Padding(
-                          padding: const EdgeInsets.all(4.0),
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 3),
                             decoration: BoxDecoration(
                                 color:
                                     Colors.deepOrange.shade800.withOpacity(0.7),
-                                borderRadius: BorderRadius.circular(20)),
+                                borderRadius: BorderRadius.circular(16)),
                             child: Text(
                               "${Level.after - totalVisits + Level.before} more to Level up",
-                              textScaleFactor: 0.8,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 13),
                             ),
                           ),
                         ),
@@ -288,6 +358,7 @@ class _MyHomePageState extends State<MyHomePage>
           ),
           isLearnMoreVisible
               ? Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
                           begin: Alignment.topCenter,
@@ -329,7 +400,10 @@ class _MyHomePageState extends State<MyHomePage>
         ),
         SplashContainer(
           onTap: () => isLoggedIn
-              ? Get.to(() => const Events())
+              ? Get.to(() => Events(
+                    query: FirebaseFirestore.instance.collection("contests"),
+                    title: 'Explore events',
+                  ))
               : debugPrint("Login for this feature"),
           wid: Column(
             mainAxisSize: MainAxisSize.min,
@@ -350,18 +424,12 @@ class Heading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [
-        Text(
-          "Were would you like to go now ?",
-        ),
-        Text(
-          "Learn how to use the app",
-          style: TextStyle(color: Colors.blue),
-        ),
-      ]),
+    return const Text(
+      "Learn how to use the app",
+      textAlign: TextAlign.center,
+      textScaleFactor: 1.05,
+      style:
+          TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
     );
   }
 }
