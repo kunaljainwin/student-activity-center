@@ -26,6 +26,7 @@
 - [Description](#description)
 - [Screenshots](#ss)
 - [Benefits](#benefits)
+- [Future scope](#future)
 - [System Requirements](#system)
 - [Technology Stack](#tech_stack)
 - [Contributors](#authors)
@@ -57,6 +58,15 @@
 - [ ] 4.) UserData and Organizers Privacy .
 - [ ] 5.) we provide Basic information of registered candiate to the event organizers so that they can grow their community and look for feedback .
 
+##  Future scopes <a name = "future"></a>
+- Open events 
+- Rewards
+- Giveaway events
+- Collaborative events
+- Paid events
+- Sponsored events
+- Auto generative events , could be helpful in classrooms
+- Global chat
 
 
 ## System Requirements <a name="system"></a>
