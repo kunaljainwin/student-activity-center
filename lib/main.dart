@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:samadhyan/utilities/themes.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
 import 'package:samadhyan/constants.dart';
 import 'package:sizer/sizer.dart';
@@ -50,14 +51,16 @@ Future<void> initializeApp() async {
   } else {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    // Processing of Push Notifications
     FirebaseMessaging.onBackgroundMessage(_messageHandler);
-
-    await FirebaseMessaging.instance.getToken().then((value) {
+    // Processing of Push Notifications
+    await FirebaseMessaging.instance
+        .getToken(
+            vapidKey:
+                "BG96yCS6v9LQolA5ycT0sZ6fiYvgnbC2uOV2C03OM9u7Cs49utdTrSytEUV_F81cMeF_t1C0fOt7pfgdF7yoOqk")
+        .then((value) {
       userNewFCMToken = value!;
       debugPrint(userNewFCMToken);
     });
-
     // await MongoDB.connect();
 
     // await RemoteConfigService().initialize();
@@ -99,23 +102,8 @@ class MyApp extends StatelessWidget {
       return GetMaterialApp(
         debugShowCheckedModeBanner: devMode,
         home: passwordLessSignIn(context),
-        theme: ThemeData(
-          // primaryColor: Colors.white,
-          useMaterial3: true,
-          textTheme: GoogleFonts.robotoTextTheme(),
-          primaryTextTheme: GoogleFonts.openSansTextTheme(),
-          textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                  textStyle:
-                      TextStyle(fontFamily: GoogleFonts.lato().fontFamily))),
-          // dialogTheme: DialogTheme(
-          //     alignment: const Alignment(0, -0.5),
-          //     shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(10))),
-          // outlinedButtonTheme: OutlinedButtonThemeData(
-          //     style: OutlinedButton.styleFrom(s
-          //         textStyle: const TextStyle(color: Colors.black))),
-        ),
+        darkTheme: themeData,
+        theme: themeData,
       );
     });
   }

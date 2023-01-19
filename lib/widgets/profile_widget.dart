@@ -71,8 +71,6 @@ class ProfileAvatar extends StatelessWidget {
                               child: OptimizedCacheImage(
                                 imageUrl: userSnapshot["imageurl"],
                                 fit: BoxFit.fill,
-                                imageRenderMethodForWeb:
-                                    ImageRenderMethodForWeb.HttpGet,
                                 errorWidget: ((context, url, error) {
                                   return const Icon(CupertinoIcons.person);
                                 }),

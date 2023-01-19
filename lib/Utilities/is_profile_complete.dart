@@ -7,7 +7,7 @@ bool isProfileComplete(DocumentSnapshot snapshot) {
   // if(snapshot["phone"] == null || snapshot["phone"] == ""){
   //   return false;
   // }
-  if (snapshot["gmail"] == null || snapshot["gmail"] == "") {
+  if (snapshot["secondemail"] == null || snapshot["secondemail"] == "") {
     return false;
   }
   // if(snapshot["address"] == null || snapshot["address"] == ""){

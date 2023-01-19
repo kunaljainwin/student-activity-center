@@ -84,109 +84,108 @@ Widget cardBuilder(BuildContext context, DocumentSnapshot event, int index) {
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-          child: Stack(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Stack(
-                    children: [
-                      AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: OptimizedCacheImage(
-                          imageUrl: eventPosterLink,
-                          filterQuality: FilterQuality.high,
-                          imageRenderMethodForWeb:
-                              ImageRenderMethodForWeb.HttpGet,
-                          errorWidget: (context, url, error) => const Icon(
-                            Icons.error,
-                            size: 50,
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                          bottom: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.timelapse,
-                                  color: Colors.white,
-                                ),
-                                CountdownTimer(
-                                  endTime:
-                                      eventStartDateTime.millisecondsSinceEpoch,
-                                  endWidget: isOngoing
-                                      ? Container(
-                                          color: Colors.green,
-                                          child: const Text(
-                                            "Event Started",
-                                            style: textStyle2,
-                                          ),
-                                        )
-                                      : Container(
-                                          color: Colors.red,
-                                          child: const Text(
-                                            "Event Ended",
-                                            style: textStyle2,
-                                          ),
-                                        ),
-                                  textStyle: textStyleCountdown,
-                                ),
-                              ],
-                            ),
-                          ))
-                    ],
-                  ),
-                  ListTile(
-                    title: Text(event["title"].toString().capitalizeFirst!,
-                        textAlign: TextAlign.left, style: textStyle2),
-                    subtitle: Wrap(
-                      spacing: 4,
+        child: Card(
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+            child: Stack(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Stack(
                       children: [
-                        const Icon(
-                          Icons.calendar_today,
-                          size: 16,
+                        AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: OptimizedCacheImage(
+                            imageUrl: eventPosterLink,
+                            errorWidget: (context, url, error) => const Icon(
+                              Icons.error,
+                              size: 50,
+                            ),
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                        Text(
-                          isOngoing
-                              ? "Start at ${timeago.format(eventStartDateTime.toDate()).toString()}"
-                              : "Ended ${timeago.format(eventEndDateTime.toDate()).toString()}",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
+                        Positioned(
+                            bottom: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.timelapse,
+                                    color: Colors.white,
+                                  ),
+                                  CountdownTimer(
+                                    endTime: eventStartDateTime
+                                        .millisecondsSinceEpoch,
+                                    endWidget: isOngoing
+                                        ? Container(
+                                            color: Colors.green,
+                                            child: const Text(
+                                              "Event Started",
+                                              style: textStyle2,
+                                            ),
+                                          )
+                                        : Container(
+                                            color: Colors.red,
+                                            child: const Text(
+                                              "Event Ended",
+                                              style: textStyle2,
+                                            ),
+                                          ),
+                                    textStyle: textStyleCountdown,
+                                  ),
+                                ],
+                              ),
+                            ))
                       ],
                     ),
-                    trailing: titleBox(totalRegistered.toString()),
-                  ),
-                ],
-              ),
-              // Positioned(
-              //     top: 8,
-              //     right: 8,
-              //     child: IconButton(
-              //         isSelected: true,
-              //         disabledColor: Colors.grey,
-              //         color: Colors.grey,
-              //         onPressed: () {
-              //           Event e = Event(
-              //             title: eventTitle,
-              //             description: event['description'],
-              //             location: eventVenue,
-              //             startDate: eventStartDateTime.toDate(),
-              //             endDate: eventEndDateTime.toDate(),
-              //           );
+                    ListTile(
+                      title: Text(event["title"].toString().capitalizeFirst!,
+                          textAlign: TextAlign.left, style: textStyle2),
+                      subtitle: Wrap(
+                        spacing: 4,
+                        children: [
+                          const Icon(
+                            Icons.calendar_today,
+                            size: 16,
+                          ),
+                          Text(
+                            isOngoing
+                                ? "Start at ${timeago.format(eventStartDateTime.toDate()).toString()}"
+                                : "Ended ${timeago.format(eventEndDateTime.toDate()).toString()}",
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      trailing: titleBox(totalRegistered.toString()),
+                    ),
+                  ],
+                ),
+                // Positioned(
+                //     top: 8,
+                //     right: 8,
+                //     child: IconButton(
+                //         isSelected: true,
+                //         disabledColor: Colors.grey,
+                //         color: Colors.grey,
+                //         onPressed: () {
+                //           Event e = Event(
+                //             title: eventTitle,
+                //             description: event['description'],
+                //             location: eventVenue,
+                //             startDate: eventStartDateTime.toDate(),
+                //             endDate: eventEndDateTime.toDate(),
+                //           );
 
-              //           Add2Calendar.addEvent2Cal(e);
-              //         },
-              //         style: IconButton.styleFrom(
-              //             backgroundColor: Colors.grey.withOpacity(0.5)),
-              //         icon: const Icon(
-              //           Icons.calendar_today_rounded,
-              //         )))
-            ],
+                //           Add2Calendar.addEvent2Cal(e);
+                //         },
+                //         style: IconButton.styleFrom(
+                //             backgroundColor: Colors.grey.withOpacity(0.5)),
+                //         icon: const Icon(
+                //           Icons.calendar_today_rounded,
+                //         )))
+              ],
+            ),
           ),
         ),
       ),

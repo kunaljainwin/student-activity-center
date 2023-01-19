@@ -16,17 +16,19 @@ Widget passwordLessSignIn(BuildContext context) {
           if (auth.currentUser == null) {
             return const LoginPage();
           } else {
-            userEmail = auth.currentUser!.email!.split("@")[0];
+            userId = auth.currentUser!.uid;
             return StreamBuilder<DocumentSnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection("users")
-                    .doc(userEmail)
+                    .doc(userId)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data!.exists) {
                     userSnapshot = snapshot.data!;
                     isLoggedIn = true;
                     userName = userSnapshot["nickname"];
+                    userEmail = userSnapshot["useremail"];
+
                     return const MyHomePage();
                   }
                   return const LoginPage();

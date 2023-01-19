@@ -60,12 +60,12 @@ class ExcelData {
     excel.rename("Sheet1", fileName);
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     for (var element in names) {
-      await users.doc(element).get().then((value) => {
+      await users.where("useremail", isEqualTo: element).get().then((value) => {
             // add data to Excel
             sheet.appendRow([
-              value['nickname'],
-              value['rollnumber'],
-              value['branch'],
+              value.docs[0]['nickname'],
+              value.docs[0]['rollnumber'],
+              value.docs[0]['branch'],
             ])
           });
       // var cell = sheet.cell(CellIndex.indexByString("A1"));
@@ -98,7 +98,7 @@ class ExcelData {
 
     // Saving the file
     if (kIsWeb) {
-      excel.save(fileName: "$eventName.xlsx"); 
+      excel.save(fileName: "$eventName.xlsx");
     } else {
       late File file;
       var directory = await getApplicationDocumentsDirectory();

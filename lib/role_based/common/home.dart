@@ -154,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage>
           ];
         },
         body: GridView.count(
-          crossAxisCount: SizerUtil.deviceType == DeviceType.mobile
+          crossAxisCount: SizerUtil.orientation == Orientation.portrait
               ? 2
               : (100.w / 350).round(),
           children: _gridItems
@@ -345,7 +345,7 @@ class _MyHomePageState extends State<MyHomePage>
                             child: Text(
                               "${Level.after - totalVisits + Level.before} more to Level up",
                               style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 13),
+                                  fontWeight: FontWeight.bold, fontSize: 12.5),
                             ),
                           ),
                         ),

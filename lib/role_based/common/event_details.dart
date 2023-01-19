@@ -282,7 +282,9 @@ class EventDetails extends StatelessWidget {
   }
 
   Widget dialogForRegisterNow(BuildContext context) {
-    String name = userName, email = userEmail, phone = userContactNumber;
+    String name = userSnapshot["nickname"],
+        email = userSnapshot['useremail'],
+        phone = userSnapshot['phone'];
     bool isOpenToRegister =
         DateTime.now().compareTo(event['lastRegisterationTime'].toDate()) < 0;
 

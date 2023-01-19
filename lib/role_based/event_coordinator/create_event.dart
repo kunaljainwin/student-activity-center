@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:optimized_cached_image/optimized_cached_image.dart';
 import 'package:samadhyan/role_based/common/drawer.dart';
+import 'package:samadhyan/widgets/login_helpers.dart';
 
 import 'package:samadhyan/widgets/title_box.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +35,7 @@ class _CreateEventState extends State<CreateEvent> {
   static DateTime endTime = DateTime.now();
   static String eventCoordinator = userName;
   static String eventCoordinatorEmail = userEmail;
-  static String eventCoordinatorPhone = userContactNumber;
+  static String eventCoordinatorPhone = userSnapshot['phone'];
   static String eventCoordinatorPassword = "";
   static String announcement = "";
   static String importantNote = "";

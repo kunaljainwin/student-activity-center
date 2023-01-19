@@ -83,7 +83,7 @@ class _ScannerState extends State<Scanner> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Mobile Scanner'),
+          title: Text(widget.documentSnapshot['title']),
           actions: [
             IconButton(
               iconSize: 32,
@@ -112,18 +112,13 @@ class _ScannerState extends State<Scanner> {
           ],
         ),
         body: MobileScanner(
-          allowDuplicates: true,
+          allowDuplicates: false,
           controller: _ScannerController,
           onDetect: (result, type) async {
             if (_isScanning) {
               _isScanning = false;
-              if (widget.documentSnapshot['attendees']
-                  .contains(result.rawValue)) {
-                Fluttertoast.showToast(
-                    backgroundColor: Colors.blue,
-                    msg: "Already Scanned and attended");
-              } else if (widget.documentSnapshot['registered']
-                      .contains(result.rawValue) &&
+              String output = result.rawValue ?? "";
+              if (widget.documentSnapshot['registered'].contains(output) &&
                   widget.documentSnapshot['startTime']
                           .toDate()
                           .compareTo(DateTime.now()) <=
@@ -132,32 +127,43 @@ class _ScannerState extends State<Scanner> {
                           .toDate()
                           .compareTo(DateTime.now()) >
                       0) {
-                MongoDB.insertData({
-                  '_id': widget.documentSnapshot.id,
-                  'attendees': FieldValue.arrayUnion([
-                    {
-                      // 'name':
-                      'email': result.rawValue,
-                      'time': DateTime.now(),
-                    }
-                  ]),
-                  // Need to code here to insert data into the database
-                });
-                await widget.documentSnapshot.reference.update(
+                // MongoDB.insertData({
+                //   '_id': widget.documentSnapshot.id,
+                //   'attendees': FieldValue.arrayUnion([
+                //     {
+                //       // 'name':
+                //       'email': result.rawValue,
+                //       'time': DateTime.now(),
+                //     }
+                //   ]),
+                //   // Need to code here to insert data into the database
+                // });
+                widget.documentSnapshot.reference.update(
                   {
-                    'registered': FieldValue.arrayRemove([userEmail]),
-                    'attendees': FieldValue.arrayUnion([result.rawValue]),
+                    'attendees': FieldValue.arrayUnion([output]),
                   },
                 );
-                userSnapshot.reference
-                    .update({'attendance': FieldValue.increment(1)});
+
+                FirebaseFirestore.instance
+                    .collection("users")
+                    .where('useremail', isEqualTo: output)
+                    .limit(1)
+                    .get()
+                    .then((value) => {
+                          value.docs[0].reference
+                              .update({'attendance': FieldValue.increment(1)})
+                        });
                 Fluttertoast.showToast(
-                    backgroundColor: Colors.green,
-                    msg: 'Marked his attendance');
+                    backgroundColor: Colors.green, msg: "successfully scanned");
+              } else if (widget.documentSnapshot['attendees']
+                  .contains(result.rawValue)) {
+                Fluttertoast.showToast(
+                    backgroundColor: Colors.blue,
+                    msg: "Already Scanned and attended");
               } else {
                 Fluttertoast.showToast(
                     backgroundColor: Colors.red,
-                    msg: "Not Registered or Early/Late for the event");
+                    msg: output + "Not Registered or Early/Late for the event");
               }
 
               _isScanning = true;

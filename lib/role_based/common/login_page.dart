@@ -14,19 +14,59 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       persistentFooterAlignment: AlignmentDirectional.topCenter,
       persistentFooterButtons: [
-        devMode ? GoogleSignInButton() : SizedBox.shrink(),
-        isLoggedIn
-            ? CircularProgressIndicator()
-            : ActionChip(
-                onPressed: () {
-                  signInWithMicrosoft();
-                },
-                label: const Text(
-                  'Sign in with Microsoft',
-                  style: TextStyle(color: Colors.white),
-                ),
-                backgroundColor: Colors.black,
-              ),
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            isLoggedIn
+                ? const CircularProgressIndicator()
+                : GoogleSignInButton(),
+            SizedBox(
+              width: 5.w,
+            ),
+            isLoggedIn
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10.0, top: 4, bottom: 4),
+                          child: Image(
+                            image: AssetImage("lib/assets/microsoft_logo.png"),
+                            height: 30.0,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Text(
+                          'Sign in with Microsoft',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    onPressed: () {
+                      signInWithMicrosoft();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 10,
+                      ),
+                    ),
+                  )
+          ],
+        )
       ],
       body: Center(
         child: Column(

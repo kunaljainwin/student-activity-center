@@ -1,27 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:samadhyan/Utilities/launch_a_url.dart';
 import 'package:samadhyan/constants.dart';
 
 Future<User?> signInWithGoogle() async {
   FirebaseAuth auth = FirebaseAuth.instance;
-  User? user;
+  UserCredential? userCredential = null;
 
   if (kIsWeb) {
     try {
       GoogleAuthProvider authProvider = GoogleAuthProvider();
-      final UserCredential userCredential =
-          await auth.signInWithPopup(authProvider);
-
-      user = userCredential.user;
-      if (user != null) {
-        await AddUser(user).addUser();
-      }
-    } catch (e) {}
+      userCredential = await auth.signInWithPopup(authProvider);
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
   } else {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -37,81 +33,120 @@ Future<User?> signInWithGoogle() async {
         idToken: googleSignInAuthentication.idToken,
       );
 
-      final UserCredential userCredential =
-          await auth.signInWithCredential(credential);
-
-      user = userCredential.user;
-      if (user != null) {
-        await AddUser(user).addUser();
-      }
+      userCredential = await auth.signInWithCredential(credential);
     } catch (e) {
-      debugPrint(e.toString());
+      Fluttertoast.showToast(msg: e.toString());
     }
   }
-  return user;
+  if (userCredential != null &&
+      userCredential.user!.email!.endsWith("@rtu.ac.in")) {
+    await AddUser(userCredential).addUser();
+  } else {
+    signOut();
+    Fluttertoast.showToast(
+        msg: "Please use RTU email(example.rtu.ac.in) to login",
+        timeInSecForIosWeb: 4);
+  }
+
+  return userCredential!.user;
 }
 
 class AddUser {
-  User useR;
-  AddUser(this.useR);
-
+  UserCredential userCredential;
+  AddUser(this.userCredential);
+  String provider = "google";
   // Create a CollectionReference called users that references the firestore collection
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   Future<void> addUser() async {
-    // userId = useR.uid;
+    final User user = userCredential.user!;
+    if (user.email!.contains(".")) {
+      provider = 'google';
+    } else {
+      provider = 'microsoft';
+    }
+    devMode ? debugPrint(userCredential.toString()) : null;
+    userId = user.uid;
+    userEmail = user.email!;
+    userName = user.displayName!;
     // Check is already sign up
-
-    userEmail = useR.email!.split("@")[0];
-
-    DocumentSnapshot result = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userEmail)
-        .get();
-    if (result.exists == false) {
-      num rollNumber =
-          int.tryParse(userEmail.substring(2, userEmail.length)) ?? 0;
-      String branch = rollNumber == 0 ? userEmail : userEmail.substring(0, 2);
-
-      // Update data to server if new user
+    DocumentSnapshot result =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    if (!result.exists) {
+// google and microsoft accounts coming
       Timestamp t = Timestamp.now();
-      bool isStudent = true;
 
+      // student or teacher
+      bool isStudent = true;
       try {
-        isStudent = useR.email!.contains(RegExp(r'[0-9]'));
+        isStudent = user.email!.contains(RegExp(r'[0-9]'));
       } catch (e) {
         isStudent = false;
       }
-      await FirebaseFirestore.instance.collection('users').doc(userEmail).set(
+      String userBranch = "";
+      num userAdmissionYear = 0;
+      num userRollNumber = 0;
+      // conditional data transformation
+      // This should be updated to get the right data from the user 🔥
+      if (isStudent && provider == 'google') {
+        //Eg. name.year branch rollnumber
+        //nikhil.21it447
+        String removeName = userEmail.split(".")[1];
+        String removeDomain = removeName.split("@")[0];
+        int n = removeDomain.length;
+
+        userRollNumber = int.parse(removeDomain.substring(n - 3, n));
+        userAdmissionYear = int.parse(removeDomain.substring(0, 2));
+        userBranch = removeDomain.substring(2, n - 3);
+      } else if (isStudent && provider == 'microsoft') {
+        //Eg. branch year rollnumber
+        //cs19503@rtu.ac.in
+        String removeDomain = userEmail.split("@")[0];
+        int n = removeDomain.length;
+
+        userRollNumber = int.parse(removeDomain.substring(n - 3, n));
+        userAdmissionYear = int.parse(removeDomain.substring(n - 5, n - 3));
+        userBranch = removeDomain.substring(0, n - 5);
+      }
+      debugPrint("userEmail: $userEmail");
+      debugPrint("userName: $userName");
+      debugPrint("userBranch: $userBranch");
+      debugPrint("userAdmissionYear: $userAdmissionYear");
+      debugPrint("userRollNumber: $userRollNumber");
+
+      await FirebaseFirestore.instance.collection('users').doc(userId).set(
         {
           'rank': isStudent ? 3 : 1,
-          'branch': branch.toUpperCase(),
-          'rollnumber': rollNumber,
-          'useremail': useR.email ?? "",
-          'nickname': useR.displayName ?? "",
-          'phone': useR.phoneNumber ?? "",
+          'branch': userBranch.toUpperCase(),
+          'rollnumber': userRollNumber,
+          'admissionyear': userAdmissionYear,
+          'useremail': userCredential.user!.email ?? "",
+          'nickname': user.displayName ?? "",
+          'phone':
+              userCredential.additionalUserInfo!.profile!['mobilePhone'] ?? '',
           'home': userLocation,
           'registerations': 0,
           'attendance': 0,
-          'imageurl': useR.photoURL ??
+          'imageurl': user.photoURL ??
               "https://firebasestorage.googleapis.com/v0/b/visitcounter-fef16.appspot.com/o/ezgif.com-gif-maker%20(1).jpg?alt=media&token=f6a09471-bbd3-4298-a694-7ef920d9a5b0",
-          'id': useR.uid,
+          'id': userId,
           "dateofbirth": t,
           'firsttime': t,
-          "lasttime": useR.metadata.lastSignInTime,
+          "lasttime": user.metadata.lastSignInTime,
           "fcmtoken": userNewFCMToken,
-          "gmail": ""
+          "secondemail": ""
         },
       );
     } else {
       isLoggedIn = true;
       userFCMToken = result['fcmtoken'];
       return userFCMToken != userNewFCMToken
-          ? FirebaseFirestore.instance.collection('users').doc(userEmail).set({
+          ? result.reference.set({
               "fcmtoken": userNewFCMToken,
-              "lasttime": useR.metadata.lastSignInTime,
-              'imageurl': useR.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/visitcounter-fef16.appspot.com/o/ezgif.com-gif-maker%20(1).jpg?alt=media&token=f6a09471-bbd3-4298-a694-7ef920d9a5b0",
-              'nickname': useR.displayName ?? "",
+              "lasttime": user.metadata.lastSignInTime,
+              'imageurl': user.photoURL ??
+                  "https://firebasestorage.googleapis.com/v0/b/visitcounter-fef16.appspot.com/o/ezgif.com-gif-maker%20(1).jpg?alt=media&token=f6a09471-bbd3-4298-a694-7ef920d9a5b0",
+              'nickname': user.displayName ?? "",
             }, SetOptions(merge: true))
           : null;
     }
@@ -119,6 +154,7 @@ class AddUser {
 }
 
 Future<void> signOut() async {
+  isLoggedIn = false;
   try {
     GoogleSignIn().signOut();
     // await GoogleSignIn().disconnect();
@@ -150,26 +186,24 @@ Future<UserCredential?> signInWithMicrosoft() async {
   // Extra information eg. phone
   // microsoftProvider.addScope('openid');
   User user;
-  late UserCredential _userCredential;
+  UserCredential? userCredential;
   try {
     if (kIsWeb) {
-      var userCredential =
+      userCredential =
           await FirebaseAuth.instance.signInWithPopup(microsoftProvider);
-      _userCredential = userCredential;
+      userCredential = userCredential;
       user = userCredential.user!;
       devMode
           ? Fluttertoast.showToast(
               msg: userCredential.toString(), timeInSecForIosWeb: 10)
           : null;
     } else {
-      var userCredential =
+      userCredential =
           await FirebaseAuth.instance.signInWithProvider(microsoftProvider);
-      _userCredential = userCredential;
+      userCredential = userCredential;
       user = userCredential.user!;
     }
-    debugPrint(_userCredential.toString());
     if (user.email!.endsWith("@rtu.ac.in")) {
-      userEmail = user.email!.split("@")[0];
 //       UserCredential(additionalUserInfo: AdditionalUserInfo(isNewUser: false, profile: {businessPhones: [],
 // preferredLanguage: null, mail: CS19503@rtu.ac.in, mobilePhone: 6378683117, officeLocation: null, displayName:
 // KUNAL JAIN, surname: JAIN, givenName: KUNAL, jobTitle: Student, @odata.context:
@@ -182,10 +216,9 @@ Future<UserCredential?> signInWithMicrosoft() async {
 // email: cs19503@rtu.ac.in, phoneNumber: null, photoURL: null, providerId: microsoft.com, uid:
 // 805f716a-5213-4a66-aa87-d13619689cae)], refreshToken:
 // AOkPPWRPYisJKZCABPprxYKjNs-A0lN3V3v7GCEVVyr2evLd5eRyAiodvS3zkq_hr9GPN6k-IHHyv3Pw1nLZ6NaERFONmyMBVTO4tc6j5dUGLbGZ5zlT0yU2guDfRpib7VriypTwbydx6_IrNfnkzNY7Tdd6DcfrmaqC3KgOAUHVvZM5wF8QUyiKoVNEZL4No2ITOY1iFFUm_DIGYLhWTv
-      userContactNumber =
-          _userCredential.additionalUserInfo!.profile!['mobilePhone'];
-      await AddUser(user).addUser();
-      return _userCredential;
+
+      await AddUser(userCredential).addUser();
+      return userCredential;
     } else {
       await signOut();
       Fluttertoast.showToast(
