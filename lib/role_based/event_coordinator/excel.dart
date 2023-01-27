@@ -64,7 +64,7 @@ class ExcelData {
             // add data to Excel
             sheet.appendRow([
               value.docs[0]['nickname'],
-              value.docs[0]['rollnumber'],
+              value.docs[0]['admissionyear']+"/"+value.docs[0]['rollnumber'],
               value.docs[0]['branch'],
             ])
           });

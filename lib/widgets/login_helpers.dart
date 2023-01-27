@@ -30,8 +30,17 @@ Widget passwordLessSignIn(BuildContext context) {
                     userEmail = userSnapshot["useremail"];
 
                     return const MyHomePage();
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.teal,
+                      ),
+                    );
+                  } 
+                  else {
+                    return const LoginPage();
                   }
-                  return const LoginPage();
                 });
           }
         }

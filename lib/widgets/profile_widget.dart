@@ -6,6 +6,7 @@ import 'package:optimized_cached_image/optimized_cached_image.dart';
 import 'package:samadhyan/Utilities/launch_a_url.dart';
 import 'package:samadhyan/Utilities/send_email.dart';
 import 'package:samadhyan/role_based/common/drawer.dart';
+import 'package:samadhyan/role_based/common/leaderboard.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
 import 'package:sizer/sizer.dart';
 
@@ -86,6 +87,13 @@ class ProfileAvatar extends StatelessWidget {
                             trailing: const Icon(Icons.arrow_downward)),
                         const Divider(
                           thickness: 1,
+                        ),
+                        ListTile(
+                          onTap: () {
+                            Get.to(() => const LeaderboardPage());
+                          },
+                          leading: const Icon(Icons.leaderboard_rounded),
+                          title: const Text("Leaderboard"),
                         ),
                         ListTile(
                           onTap: () {},

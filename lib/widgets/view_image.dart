@@ -3,10 +3,15 @@ import 'package:optimized_cached_image/optimized_cached_image.dart';
 import 'package:photo_view/photo_view.dart';
 
 class PhotoViewer extends StatefulWidget {
+  final String title;
   final String imagePath;
+
   final String image_hero_tag;
   const PhotoViewer(
-      {Key? key, required this.imagePath, this.image_hero_tag = ""})
+      {Key? key,
+      required this.imagePath,
+      this.image_hero_tag = "",
+      this.title = ""})
       : super(key: key);
 
   @override
@@ -17,16 +22,10 @@ class _PhotoViewerState extends State<PhotoViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.tr,
-      //   elevation: 0,
-      //   leading: CircleButton(
-      //     icon: Icons.arrow_back,
-      //     onPressed: () {
-      //       Navigator.pop(context);
-      //     },
-      //   ),
-      // ),
+      appBar: AppBar(
+        backgroundColor: Colors.black.withOpacity(0.5),
+        title: Text(widget.title),
+      ),
       body: PhotoView.customChild(
         child: widget.imagePath.isNotEmpty
             ? Hero(
@@ -38,9 +37,8 @@ class _PhotoViewerState extends State<PhotoViewer> {
               )
             : const Icon(Icons.account_box),
         // filterQuality: FilterQuality.high,
-        tightMode: true,
-        enableRotation: true,
-        enablePanAlways: true,
+        minScale: PhotoViewComputedScale.contained,
+        maxScale: PhotoViewComputedScale.covered * 1.5,
       ),
     );
   }

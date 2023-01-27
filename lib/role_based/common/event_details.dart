@@ -25,11 +25,16 @@ class EventDetails extends StatelessWidget {
 
     bool isAttended = List<String>.from(event["attendees"]).contains(userEmail);
 
-    int endTime = event['startTime'].millisecondsSinceEpoch;
+    int endTime = event["startTime"].toDate().millisecondsSinceEpoch;
 
+    // event['endTime'].millisecondsSinceEpoch -
+    //     DateTime.now().millisecondsSinceEpoch;
+    print(endTime);
     // final notes = List<Widget>.generate(event['note'].length,
     //         (i) => Text((i + 1).toString() + ").  " + event['note'][i] + "."))
     // .toList();
+    bool isOpenToRegister =
+        DateTime.now().compareTo(event['lastRegisterationTime'].toDate()) < 0;
     var textStyleTitle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
     return Scaffold(
       persistentFooterAlignment: AlignmentDirectional.center,
@@ -41,7 +46,7 @@ class EventDetails extends StatelessWidget {
             icon: Icon(Icons.arrow_back_ios)),
         ActionChip(
           backgroundColor: isRegistered ? Colors.grey : Colors.blue,
-          onPressed: isRegistered
+          onPressed: isRegistered || !isOpenToRegister
               ? null
               : () {
                   showDialog(
@@ -54,11 +59,33 @@ class EventDetails extends StatelessWidget {
           label: isRegistered
               ? CountdownTimer(
                   endTime: endTime,
+                  widgetBuilder: (_, time) {
+                    if (time == null) {
+                      return const Text(
+                        "Time ran out",
+                        textScaleFactor: 1.3,
+                        style: TextStyle(color: Colors.black),
+                      );
+                    }
+                    return Text(
+                      "${time.days ?? 0}d ${time.hours ?? 0}h ${time.min ?? 0}m ${time.sec ?? 0}s",
+                      textScaleFactor: 1.2,
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    );
+                  },
+                  endWidget: const Text(
+                    "Time ran out",
+                    textScaleFactor: 1.3,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  textStyle: TextStyle(color: Colors.black, fontSize: 14),
                 )
-              : const Text(
+              : Text(
                   "Register Now",
                   textScaleFactor: 1.3,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                      color: isOpenToRegister ? Colors.white : Colors.black),
                 ),
         ),
         IconButton(
@@ -121,7 +148,7 @@ class EventDetails extends StatelessWidget {
 
           Container(
             height: 50,
-            padding: EdgeInsets.only(top: 10, left: 10),
+            padding: EdgeInsets.only(top: 10, left: 4.w),
             child: ListView(
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
@@ -163,24 +190,23 @@ class EventDetails extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
             child: Row(
               children: [
                 Icon(Icons.place),
                 SizedBox(
                   width: 5,
                 ),
-                Text(event["location"])
+                Text(event["location"].toString().capitalizeFirst!),
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
             child: Text(
-                "Register for the contest in advance and You can fill out the contact information at the registration step."),
-          ),
-          const SizedBox(
-            height: 10,
+              "Register for the contest in advance and You can fill out the contact information at the registration step.${event["description"]}",
+              style: TextStyle(fontSize: 14),
+            ),
           ),
 
           const ListTile(
@@ -191,7 +217,7 @@ class EventDetails extends StatelessWidget {
             title: Text("Important Note", textScaleFactor: 1.3),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Text(event["importantNote"]),
           ),
           // Column(crossAxisAlignment: CrossAxisAlignment.start, children: notes),
@@ -206,12 +232,12 @@ class EventDetails extends StatelessWidget {
             title: Text("Announcement", textScaleFactor: 1.3),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Text(event['announcement']),
           ),
 
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.0),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
             child: Text(
               "Users must register to participate.\nWe hope you will enjoy this event!",
               textAlign: TextAlign.center,

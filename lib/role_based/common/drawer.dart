@@ -56,8 +56,8 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           OptimizedCacheImage(
             imageUrl: urlLogo,
-            imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
             fit: BoxFit.fitWidth,
+            errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
           // UserAccountsDrawerHeader(
           //   arrowColor: Colors.grey,
@@ -71,7 +71,7 @@ class _MyDrawerState extends State<MyDrawer> {
           //   accountEmail: null,
           // ),
           !devMode
-              ? SizedBox.shrink()
+              ? const SizedBox.shrink()
               : ListTile(
                   leading: const Icon(Icons.account_box),
 
@@ -191,25 +191,31 @@ class _MyDrawerState extends State<MyDrawer> {
                       actionsAlignment: MainAxisAlignment.spaceEvenly,
                       actions: [
                         TextButton(
-                            onPressed: () {
-                              Get.back();
-                            },
-                            child: const Text("No")),
-                        TextButton(
                             onPressed: () async {
                               Get.back();
                               signOut();
                             },
-                            child: const Text("Yes"))
+                            style: TextButton.styleFrom(
+                              primary: Colors.black,
+                            ),
+                            child: const Text("Yes, I want to leave")),
+                        TextButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.greenAccent,
+                              primary: Colors.black,
+                            ),
+                            child: const Text("No")),
                       ],
                     );
                   });
             },
             leading: const Icon(
               CupertinoIcons.multiply_circle,
-              color: Colors.red,
             ),
-            title: const Text("Log Out", overflow: TextOverflow.fade),
+            title: const Text("Log out", overflow: TextOverflow.fade),
             horizontalTitleGap: 16,
           ),
         ],

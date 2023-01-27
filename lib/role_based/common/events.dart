@@ -73,6 +73,7 @@ Widget cardBuilder(BuildContext context, DocumentSnapshot event, int index) {
         : EdgeInsets.only(left: 15.w, right: 20.w, top: 8.h, bottom: 4.h),
     child: InkWell(
       child: Container(
+        padding: EdgeInsets.zero,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: const BorderRadius.all(Radius.circular(16.0)),
@@ -85,6 +86,7 @@ Widget cardBuilder(BuildContext context, DocumentSnapshot event, int index) {
           ],
         ),
         child: Card(
+          margin: EdgeInsets.all(1),
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(16.0)),
             child: Stack(

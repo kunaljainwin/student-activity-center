@@ -5,8 +5,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:samadhyan/role_based/common/getx_trial.dart';
 import 'package:samadhyan/utilities/themes.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
 import 'package:samadhyan/constants.dart';
@@ -16,7 +19,7 @@ import 'package:url_strategy/url_strategy.dart';
 // Backend analytics
 FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 Future<void> _messageHandler(RemoteMessage message) async {
-  debugPrint("Opened through background message");
+  Fluttertoast.showToast(msg: "Opened through background message");
 }
 
 // Driver Program
@@ -24,7 +27,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPathUrlStrategy();
   await initializeApp();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 Future<void> initializeApp() async {
@@ -92,8 +95,8 @@ Future<void> initializeApp() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
+  MyApp({Key? key}) : super(key: key);
+  // final GetTrial getTrial = Get.put(GetTrial());
 // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

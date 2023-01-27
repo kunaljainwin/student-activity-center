@@ -60,7 +60,7 @@ class AddUser {
 
   Future<void> addUser() async {
     final User user = userCredential.user!;
-    if (user.email!.contains(".")) {
+    if (user.email!.split("@")[0].contains(".")) {
       provider = 'google';
     } else {
       provider = 'microsoft';

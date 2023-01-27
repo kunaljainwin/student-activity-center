@@ -52,16 +52,16 @@ dependencies:
   google_fonts:
   google_sign_in:
   # cached_network_image: 
-  # firebase_in_app_messaging:
-  firebase_core: ^1.10.0
+  firebase_in_app_messaging:
+  firebase_core:
   firebase_analytics:
-  cloud_firestore: ^3.1.0
+  cloud_firestore: 
   firebase_auth:
   firebase_storage:
   firebase_messaging:
   firebase_dynamic_links:
   # app check
-  firebase_app_check: ^0.0.9
+  firebase_app_check:
   # firebase_remote_config:
   flutter_native_splash: 
   intl:
@@ -98,6 +98,7 @@ dependencies:
   percent_indicator: ^4.2.2
   sizer:
   #https://pub.dev/packages/flutter_adaptive_scaffold
+  clipboard: ^0.1.3
   
 
 
@@ -140,6 +141,8 @@ flutter:
   - lib/assets/made-in-india-icon.svg
   - lib/assets/notices-board-icon.svg
   - lib/assets/event-calendar-icon.svg
+  - lib/assets/openAI_logo.svg
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -237,15 +236,12 @@ class _CreateEventState extends State<CreateEvent> {
                               // setState(() {});
                             },
                             child: OptimizedCacheImage(
-                              useOldImageOnUrlChange: true,
                               imageUrl: eventPosterLink,
-                              imageRenderMethodForWeb:
-                                  ImageRenderMethodForWeb.HttpGet,
                               progressIndicatorBuilder:
                                   (context, url, downloadProgress) => Center(
                                 child: CircularProgressIndicator(
                                     value: downloadProgress.progress,
-                                    color: Colors.blue),
+                                    color: Colors.orange),
                               ),
                             ),
                           ),

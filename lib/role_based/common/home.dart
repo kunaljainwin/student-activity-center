@@ -8,14 +8,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:samadhyan/constants.dart';
 import 'package:samadhyan/role_based/common/achievements.dart';
 import 'package:samadhyan/role_based/common/additional_info.dart';
+import 'package:samadhyan/role_based/common/chat_gpt.dart';
 import 'package:samadhyan/role_based/common/drawer.dart';
 import 'package:samadhyan/role_based/common/event_details.dart';
 import 'package:samadhyan/role_based/common/events.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:samadhyan/role_based/common/tweets.dart';
 import 'package:samadhyan/role_based/empty_screen.dart';
 import 'package:samadhyan/services/firebase/in_app_messaging.dart';
 import 'package:samadhyan/utilities/compute_level.dart';
@@ -27,6 +30,7 @@ import 'package:samadhyan/widgets/special_splash.dart';
 import 'package:samadhyan/Utilities/learn_more.dart';
 import 'package:samadhyan/services/Firebase/dynamic_links_util.dart'
     as dynamic_links_util;
+import 'package:samadhyan/widgets/title_box.dart';
 import 'package:sizer/sizer.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -125,16 +129,34 @@ class _MyHomePageState extends State<MyHomePage>
       ),
     },
     {
+      "title": "Ai chat bot",
+      "svg_icon": "lib/assets/openAI_logo.svg",
+      "color": Colors.red,
+      "route": const ChatPage()
+    },
+    {
       "title": "Notices",
       "svg_icon": "lib/assets/notices-board-icon.svg",
       "color": Colors.red,
       "route": const EmptyScreen()
     },
     {
-      "title": "Suggestions",
+      "title": "Request Feature",
       "svg_icon": "lib/assets/made-in-india-icon.svg",
       "color": Colors.red,
       "route": const EmptyScreen()
+    },
+    {
+      "title": "Tweets & News",
+      "svg_icon": "lib/assets/made-in-india-icon.svg",
+      "color": Colors.red,
+      "route": kIsWeb ? EmptyScreen() : TweetsPage()
+    },
+    {
+      "title": "Global Chat",
+      "svg_icon": "lib/assets/made-in-india-icon.svg",
+      "color": Colors.red,
+      "route": EmptyScreen()
     },
   ];
 
@@ -146,25 +168,58 @@ class _MyHomePageState extends State<MyHomePage>
 
     return Scaffold(
       body: NestedScrollView(
-        controller: _scrollController,
+        // controller: _scrollController,
         floatHeaderSlivers: true,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
             appbarMain(context),
           ];
         },
-        body: GridView.count(
-          crossAxisCount: SizerUtil.orientation == Orientation.portrait
-              ? 2
-              : (100.w / 350).round(),
-          children: _gridItems
-              .map((e) => Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: GridCard(
-                      e: e,
-                    ),
-                  ))
-              .toList(),
+        body: ListView(
+          shrinkWrap: true,
+          children: [
+            GridView.count(
+              controller: _scrollController,
+              shrinkWrap: true,
+              crossAxisCount: SizerUtil.orientation == Orientation.portrait
+                  ? 2
+                  : (100.w / 350).round(),
+              children: _gridItems
+                  .map((e) => Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Card(
+                          color: Colors.teal,
+                          child: GridCard(
+                            e: e,
+                          ),
+                        ),
+                      ))
+                  .toList(),
+            ),
+            titleBox("Registered events"),
+            PaginateFirestore(
+                // scrollController: _scrollController,
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                onEmpty: Image.asset(
+                  "lib/assets/no_events.png",
+                  isAntiAlias: true,
+                  alignment: Alignment.topCenter,
+                ),
+                itemBuilder: (context, listSnapshot, index) {
+                  return InkWell(
+                      key: Key(index.toString()),
+                      child: cardBuilder(context, listSnapshot[index], index),
+                      onTap: () => Get.to(() => EventDetails(
+                            event: listSnapshot[index],
+                          )));
+                },
+                query: FirebaseFirestore.instance
+                    .collection("contests")
+                    .where("registered", arrayContains: userEmail)
+                    .orderBy("endTime", descending: true),
+                itemBuilderType: PaginateBuilderType.listView),
+          ],
         ),
         // body: SingleChildScrollView(
         //   child: Column(
@@ -236,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage>
                 borderRadius: BorderRadius.circular(15)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
+              children: [
                 Icon(Icons.menu),
                 SizedBox(
                   width: 5,
@@ -244,7 +299,10 @@ class _MyHomePageState extends State<MyHomePage>
                 Text(
                   appName,
                   textScaleFactor: 1.1,
-                ),
+                  style: TextStyle(
+                      // fontWeight: FontWeight.bold,
+                      fontFamily: GoogleFonts.lato().fontFamily),
+                )
               ],
             ),
           ),
@@ -253,6 +311,7 @@ class _MyHomePageState extends State<MyHomePage>
       floating: true,
       snap: true,
       expandedHeight: 160.0,
+      backgroundColor: Colors.white,
       // snap: true,
       // stretch: false,
       // pinned: true,
@@ -326,13 +385,13 @@ class _MyHomePageState extends State<MyHomePage>
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          "${totalVisits - Level.before}/${Level.after} points",
-                          softWrap: true,
-                          overflow: TextOverflow.clip,
-                        ),
+                        // Text(
+                        //   "${totalVisits - Level.before}/${Level.after} points",
+                        //   softWrap: true,
+                        //   overflow: TextOverflow.clip,
+                        // ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.0),
                           child: Container(

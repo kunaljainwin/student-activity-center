@@ -7,6 +7,7 @@ import 'package:samadhyan/role_based/event_coordinator/excel.dart';
 import 'package:samadhyan/services/firebase/dynamic_links_util.dart';
 import 'package:samadhyan/widgets/title_box.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sizer/sizer.dart';
 
 class EventDetails extends StatelessWidget {
   const EventDetails({super.key, required this.event});
@@ -15,7 +16,7 @@ class EventDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     num totalAttendees = event["attendees"].length;
-    num totalRegistered = event["registered"].length + totalAttendees;
+    num totalRegistered = event["registered"].length;
     // final notes = List<Widget>.generate(event['note'].length,
     //         (i) => Text((i + 1).toString() + ").  " + event['note'][i] + "."))
     //     .toList();
@@ -55,43 +56,61 @@ class EventDetails extends StatelessWidget {
         padding: EdgeInsets.all(8),
         children: [
           getAppBarUI(context),
-          ElevatedButton(
-              onPressed: () async {
-                List<String> emails =
-                    List<String>.from(event["registered"], growable: true);
+          Row(
+            children: [
+              titleBox(
+                "Registered :  " + totalRegistered.toString(),
+              ),
+              ElevatedButton(
+                  onPressed: () async {
+                    List<String> emails =
+                        List<String>.from(event["registered"], growable: true);
 
-                ExcelData.onSave(
-                    eventName: event["title"],
-                    fileName: "registerations",
-                    names: emails);
-              },
-              child: const Text("Get excel of registered")),
-          ElevatedButton(
-              onPressed: () async {
-                List<String> emails =
-                    List<String>.from(event["attendees"], growable: true);
-                ExcelData.onSave(
-                    eventName: event["title"],
-                    fileName: "attendance",
-                    names: emails);
-              },
-              child: const Text("Get excel for attendees")),
-          titleBox(
-            "Registered :  " + totalRegistered.toString(),
+                    ExcelData.onSave(
+                        eventName: event["title"],
+                        fileName: "registerations",
+                        names: emails);
+                  },
+                  child: const Text("Get excel of registered")),
+            ],
           ),
-          Wrap(
-              children: event["registered"]
-                  .map<Widget>((e) => ListTile(
-                        title: Text(e),
-                      ))
-                  .toList()),
-          titleBox("Attendees :  " + totalAttendees.toString()),
-          Wrap(
-              children: event["attendees"]
-                  .map<Widget>((e) => ListTile(
-                        title: Text(e),
-                      ))
-                  .toList())
+          SizedBox(
+            height: 30.h,
+            child: ListView(
+              shrinkWrap: true,
+        
+                children: event["registered"]
+                    .map<Widget>((e) => ListTile(
+                          title: Text(e),
+                        ))
+                    .toList()),
+          ),
+          Row(
+            children: [
+              titleBox("Attendees :  " + totalAttendees.toString()),
+              ElevatedButton(
+                  onPressed: () async {
+                    List<String> emails =
+                        List<String>.from(event["attendees"], growable: true);
+                    ExcelData.onSave(
+                        eventName: event["title"],
+                        fileName: "attendance",
+                        names: emails);
+                  },
+                  child: const Text("Get excel for attendees")),
+            ],
+          ),
+          SizedBox(
+            height: 30.h,
+            child: ListView(
+              shrinkWrap: true,
+              
+                children: event["attendees"]
+                    .map<Widget>((e) => ListTile(          
+                          title: Text(e),
+                        ))
+                    .toList()),
+          )
         ],
       ),
     );
