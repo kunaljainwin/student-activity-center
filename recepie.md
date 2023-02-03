@@ -91,3 +91,58 @@ Contribution (suggestions, issues, feature request, pull requests) are highly we
 
 
 # Not done
+### 1
+```javascript
+<!-- extra setup for web -->
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      // navigator.serviceWorker.register("/flutter_service_worker.js");
+      navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    });
+  }
+  </script>
+```
+### 2 create file web/firebase-messaging-sw.js
+```javascript
+importScripts("https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js");
+importScripts("https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js");
+
+//Using singleton breaks instantiating messaging()
+// App firebase = FirebaseWeb.instance.app;
+
+
+// const firebaseConfig = {
+//     apiKey: "AIzaSyAWT3g73HTwiePpKXDywTs3z4_--2_C0zU",
+//     authDomain: "visitcounter-fef16.firebaseapp.com",
+//     databaseURL: "https://visitcounter-fef16-default-rtdb.firebaseio.com",
+//     projectId: "visitcounter-fef16",
+//     storageBucket: "visitcounter-fef16.appspot.com",
+//     messagingSenderId: "684329885216",
+//     appId: "1:684329885216:web:fe77d493c10d3eaa032645",
+//     measurementId: "G-WNB3QKWVJ2"
+//   };
+
+const messaging = firebase.messaging();
+messaging.setBackgroundMessageHandler(function (payload) {
+    const promiseChain = clients
+        .matchAll({
+            type: "window",
+            includeUncontrolled: true
+        })
+        .then(windowClients => {
+            for (let i = 0; i < windowClients.length; i++) {
+                const windowClient = windowClients[i];
+                windowClient.postMessage(payload);
+            }
+        })
+        .then(() => {
+            return registration.showNotification("New Message");
+        });
+    return promiseChain;
+});
+self.addEventListener('notificationclick', function (event) {
+    console.log('notification received: ', event)
+});
+```
+

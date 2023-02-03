@@ -10,12 +10,11 @@ import 'package:samadhyan/widgets/login_helpers.dart';
 class AchievementsPage extends StatelessWidget {
   final DocumentSnapshot userData;
   final num level;
-  const AchievementsPage(
-      {Key? key,
-      required this.userData,
-      required this.level,
-})
-      : super(key: key);
+  const AchievementsPage({
+    Key? key,
+    required this.userData,
+    required this.level,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

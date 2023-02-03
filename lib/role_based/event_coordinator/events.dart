@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
+import 'package:samadhyan/services/qr/mobile_scanner.dart';
 import 'package:samadhyan/widgets/round_indicator.dart';
 import 'package:sizer/sizer.dart';
 
@@ -70,7 +72,16 @@ class _EventCoordinatorEventsState extends State<EventCoordinatorEvents>
                     return InkWell(
                         key: Key(index.toString()),
                         child: ListTile(
-                          title: Text(listSnapshot[index]["title"]),
+                          title: Text(
+                            listSnapshot[index]["title"],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: GoogleFonts.nunito().fontFamily,
+                              fontSize: 14,
+                            ),
+                          ),
+                        
+                 
                         ),
                         onTap: () => Get.to(() => EventDetails(
                               event: listSnapshot[index],
@@ -86,7 +97,19 @@ class _EventCoordinatorEventsState extends State<EventCoordinatorEvents>
                     return InkWell(
                         key: Key(index.toString()),
                         child: ListTile(
-                          title: Text(listSnapshot[index]["title"]),
+                          title: Text(
+                            listSnapshot[index]["title"],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: GoogleFonts.nunito().fontFamily,
+                              fontSize: 14,
+                            ),
+                          ),
+                          trailing: IconButton(
+                              onPressed: () => Get.to(() => Scanner(
+                                    documentSnapshot: listSnapshot[index],
+                                  )),
+                              icon: Icon(Icons.qr_code_scanner)),
                         ),
                         onTap: () => Get.to(() => EventDetails(
                               event: listSnapshot[index],

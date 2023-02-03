@@ -198,25 +198,33 @@ class _CreateEventState extends State<CreateEvent> {
                 titleBox("Event Poster"),
                 //edit
                 //remove
+
                 isImageSelected
                     ? Stack(
                         alignment: Alignment.center,
                         children: [
-                          InkWell(
-                              onTap: () async {},
-                              child: Image.memory(
-                                _fileBytes,
-                                errorBuilder: ((context, error, stackTrace) =>
-                                    const Text("Error loading image")),
-                                frameBuilder: ((context, child, frame,
-                                        wasSynchronouslyLoaded) =>
-                                    frame == null
-                                        ? const Center(
-                                            child:
-                                                const CircularProgressIndicator(),
-                                          )
-                                        : child),
-                              )),
+                          Card(
+                              margin: EdgeInsets.all(1),
+                              child: ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(16.0)),
+                                  child: AspectRatio(
+                                    aspectRatio: 16 / 9,
+                                    child: Image.memory(
+                                      _fileBytes,
+                                      errorBuilder: ((context, error,
+                                              stackTrace) =>
+                                          const Text("Error loading image")),
+                                      frameBuilder: ((context, child, frame,
+                                              wasSynchronouslyLoaded) =>
+                                          frame == null
+                                              ? const Center(
+                                                  child:
+                                                      const CircularProgressIndicator(),
+                                                )
+                                              : child),
+                                    ),
+                                  ))),
                           ActionChip(
                               label: const Text("Change"),
                               avatar: const Icon(Icons.refresh),
@@ -235,13 +243,30 @@ class _CreateEventState extends State<CreateEvent> {
                               // eventPosterLink = await pickEventPoster(context);
                               // setState(() {});
                             },
-                            child: OptimizedCacheImage(
-                              imageUrl: eventPosterLink,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) => Center(
-                                child: CircularProgressIndicator(
-                                    value: downloadProgress.progress,
-                                    color: Colors.orange),
+                            child: Card(
+                              margin: EdgeInsets.all(1),
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(16.0)),
+                                child: AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: OptimizedCacheImage(
+                                    imageUrl: eventPosterLink,
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(
+                                      Icons.error,
+                                      size: 50,
+                                    ),
+                                    fit: BoxFit.cover,
+                                    progressIndicatorBuilder:
+                                        (context, url, downloadProgress) =>
+                                            Center(
+                                      child: CircularProgressIndicator(
+                                          value: downloadProgress.progress,
+                                          color: Colors.orange),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -257,163 +282,22 @@ class _CreateEventState extends State<CreateEvent> {
                       ),
 
                 titleBox("Event Title"),
-                TextFormField(
-                  decoration: InputDecoration(
-                    // label: Text('Full Name'),
-                    hintText: "Add event name",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  initialValue: title,
-                  // The validator receives the text that the user has entered.
-                  onChanged: (value) => title = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
+                _inputEventName(),
                 titleBox("Event Description"),
-                TextFormField(
-                  initialValue: description,
-                  // The validator receives the text that the user has entered.
-                  onChanged: (value) => description = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
+                _inputEventDescription(),
                 titleBox("Starting Date and Time"),
-                InkWell(
-                  onTap: () {
-                    showCupertinoDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            contentPadding: EdgeInsets.zero,
-                            content: CupertinoDatePicker(
-                              onDateTimeChanged: (DateTime dt) {
-                                setState(() {
-                                  startTime = dt;
-                                });
-                              },
-                              initialDateTime: DateTime.now(),
-                            ),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Get.back();
-                                  },
-                                  child: Text("Done"))
-                            ],
-                          );
-                        });
-                  },
-                  child: Text(
-                    DateFormat().format(startTime).toString(),
-                  ),
-                ),
+                _inputEventStartingDateTime(context),
                 titleBox("Registeration last Date and Time"),
-                InkWell(
-                  onTap: () {
-                    showCupertinoDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            contentPadding: EdgeInsets.zero,
-                            content: CupertinoDatePicker(
-                              onDateTimeChanged: (DateTime dt) {
-                                setState(() {
-                                  lastRegisterationTime = dt;
-                                });
-                              },
-                              initialDateTime: DateTime.now(),
-                            ),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Get.back();
-                                  },
-                                  child: Text("Done"))
-                            ],
-                          );
-                        });
-                  },
-                  child: Text(
-                    DateFormat().format(lastRegisterationTime).toString(),
-                  ),
-                ),
+                _inputEventLastRegisterationDateTime(context),
                 titleBox("Ending Date and Time"),
-                InkWell(
-                  onTap: () {
-                    showCupertinoDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            contentPadding: EdgeInsets.zero,
-                            content: CupertinoDatePicker(
-                              onDateTimeChanged: (DateTime dt) {
-                                setState(() {
-                                  endTime = dt;
-                                });
-                              },
-                              initialDateTime: DateTime.now(),
-                            ),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Get.back();
-                                  },
-                                  child: Text("Done"))
-                            ],
-                          );
-                        });
-                  },
-                  child: Text(
-                    DateFormat().format(endTime).toString(),
-                  ),
-                ),
+                _inputEventEndingDateTime(context),
                 titleBox("Announcements"),
-                TextFormField(
-                  initialValue: announcement,
-                  // The validator receives the text that the user has entered.
-                  onChanged: (value) => announcement = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
+                _inputEventAnnouncements(),
                 titleBox("Important Notes"),
-                TextFormField(
-                  initialValue: importantNote,
-                  // The validator receives the text that the user has entered.
-                  onChanged: (value) => importantNote = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
+                _inputEventImportantNotes(),
 
                 titleBox("Event Location"),
-                TextFormField(
-                  initialValue: location,
-                  // The validator receives the text that the user has entered.
-                  onChanged: (value) => location = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
+                _inputEventLocation(),
                 titleBox("Event Coordinator"),
                 TextFormField(
                   initialValue: eventCoordinator,
@@ -426,55 +310,33 @@ class _CreateEventState extends State<CreateEvent> {
                     return null;
                   },
                 ),
-                titleBox("Event Coordinator Email"),
-                TextFormField(
-                  initialValue: eventCoordinatorEmail,
-                  // The validator receives the text that the user has entered.
-                  onChanged: (value) => eventCoordinatorEmail = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
 
-                titleBox("Event Coordinator Phone"),
-                TextFormField(
-                  initialValue: eventCoordinatorPhone,
-                  // The validator receives the text that the user has entered.
-                  onChanged: (value) => eventCoordinatorPhone = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
-                titleBox("Club Name"),
-                TextFormField(
-                  initialValue: clubName,
-                  // The validator receives the text that the user has entered.
-                  onChanged: (value) => clubName = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
+                // titleBox("Event Coordinator Phone"),
+                // TextFormField(
+                //   initialValue: eventCoordinatorPhone,
+                //   // The validator receives the text that the user has entered.
+                //   onChanged: (value) => eventCoordinatorPhone = value,
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return 'Please enter some text';
+                //     }
+                //     return null;
+                //   },
+                // ),
+                // titleBox("Club Name"),
+                // TextFormField(
+                //   initialValue: clubName,
+                //   // The validator receives the text that the user has entered.
+                //   onChanged: (value) => clubName = value,
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return 'Please enter some text';
+                //     }
+                //     return null;
+                //   },
+                // ),
                 titleBox("Social Media Link for Updates"),
-                TextFormField(
-                  initialValue: socialMediaLinkForUpdates,
-                  // The validator receives the text that the user has entered.
-                  onChanged: (value) => socialMediaLinkForUpdates = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
+                _inputSocialMediaLinks(),
 
                 // TimePickerDialog(initialTime: TimeOfDay.now()),
                 // TextField(
@@ -559,6 +421,193 @@ class _CreateEventState extends State<CreateEvent> {
                   ),
                 ),
               ])),
+    );
+  }
+
+  TextFormField _inputSocialMediaLinks() {
+    return TextFormField(
+      initialValue: socialMediaLinkForUpdates,
+      // The validator receives the text that the user has entered.
+      onChanged: (value) => socialMediaLinkForUpdates = value,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
+    );
+  }
+
+  TextFormField _inputEventLocation() {
+    return TextFormField(
+      initialValue: location,
+      // The validator receives the text that the user has entered.
+      onChanged: (value) => location = value,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
+    );
+  }
+
+  TextFormField _inputEventImportantNotes() {
+    return TextFormField(
+      initialValue: importantNote,
+      // The validator receives the text that the user has entered.
+      onChanged: (value) => importantNote = value,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
+    );
+  }
+
+  TextFormField _inputEventAnnouncements() {
+    return TextFormField(
+      initialValue: announcement,
+      // The validator receives the text that the user has entered.
+      onChanged: (value) => announcement = value,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
+    );
+  }
+
+  InkWell _inputEventEndingDateTime(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        showCupertinoDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                contentPadding: EdgeInsets.zero,
+                content: CupertinoDatePicker(
+                  onDateTimeChanged: (DateTime dt) {
+                    setState(() {
+                      endTime = dt;
+                    });
+                  },
+                  initialDateTime: DateTime.now(),
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      child: Text("Done"))
+                ],
+              );
+            });
+      },
+      child: Text(
+        DateFormat().format(endTime).toString(),
+      ),
+    );
+  }
+
+  InkWell _inputEventLastRegisterationDateTime(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        showCupertinoDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                contentPadding: EdgeInsets.zero,
+                content: CupertinoDatePicker(
+                  onDateTimeChanged: (DateTime dt) {
+                    setState(() {
+                      lastRegisterationTime = dt;
+                    });
+                  },
+                  initialDateTime: DateTime.now(),
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      child: Text("Done"))
+                ],
+              );
+            });
+      },
+      child: Text(
+        DateFormat().format(lastRegisterationTime).toString(),
+      ),
+    );
+  }
+
+  InkWell _inputEventStartingDateTime(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        showCupertinoDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                contentPadding: EdgeInsets.zero,
+                content: CupertinoDatePicker(
+                  onDateTimeChanged: (DateTime dt) {
+                    setState(() {
+                      startTime = dt;
+                    });
+                  },
+                  initialDateTime: DateTime.now(),
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      child: Text("Done"))
+                ],
+              );
+            });
+      },
+      child: Text(
+        DateFormat().format(startTime).toString(),
+      ),
+    );
+  }
+
+  TextFormField _inputEventDescription() {
+    return TextFormField(
+      initialValue: description,
+      // The validator receives the text that the user has entered.
+      onChanged: (value) => description = value,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
+    );
+  }
+
+  TextFormField _inputEventName() {
+    return TextFormField(
+      decoration: InputDecoration(
+        // label: Text('Full Name'),
+        hintText: "Add event name",
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      initialValue: title,
+      // The validator receives the text that the user has entered.
+      onChanged: (value) => title = value,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
     );
   }
 

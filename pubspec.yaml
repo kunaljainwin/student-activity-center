@@ -99,6 +99,9 @@ dependencies:
   sizer:
   #https://pub.dev/packages/flutter_adaptive_scaffold
   clipboard: ^0.1.3
+
+  flutter_tts: ^3.6.3
+  animated_text_kit: ^4.2.2
   
 
 

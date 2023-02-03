@@ -1,11 +1,15 @@
 import 'dart:convert';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:optimized_cached_image/optimized_cached_image.dart';
+import 'package:samadhyan/keys.dart';
+import 'package:samadhyan/utilities/text_to_speech.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
+import 'package:sizer/sizer.dart';
 
 const backgroundColor = Color(0xff343541);
 const botBackgroundColor = Color(0xff444654);
@@ -18,8 +22,7 @@ class ChatPage extends StatefulWidget {
 }
 
 Future<String> generateResponse(String prompt) async {
-  const apiKey =
-      "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"; //apiSecretKey;
+  const apiKey = chatGPTApiKey; //apiSecretKey;
 
   var url = Uri.https("api.openai.com", "/v1/completions");
   final response = await http.post(
@@ -45,10 +48,12 @@ Future<String> generateResponse(String prompt) async {
   return newresponse['choices'][0]['text'];
 }
 
+final List<ChatMessage> _messages = [];
+
 class _ChatPageState extends State<ChatPage> {
   final _textController = TextEditingController();
   final _scrollController = ScrollController();
-  final List<ChatMessage> _messages = [];
+
   late bool isLoading;
 
   @override
@@ -62,11 +67,11 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
+        title: const Text(
           "OpenAI's ChatGPT bot",
           maxLines: 1,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white54,
             fontSize: 20,
           ),
@@ -78,7 +83,27 @@ class _ChatPageState extends State<ChatPage> {
         child: Column(
           children: [
             Expanded(
-              child: _buildList(),
+              child: _messages.isEmpty
+                  ? Center(
+                      child: Wrap(
+                      direction: 100.w < 800 ? Axis.horizontal : Axis.vertical,
+                      children: [
+                        flexCardGpt(
+                            icon: Icons.flash_on,
+                            color: Colors.amberAccent,
+                            text: "A chatbot powered by OpenAI's GPT-3"),
+                        // flexCardGpt(
+                        //     icon: Icons.multitrack_audio_rounded,
+                        //     color: Colors.cyanAccent,
+                        //     text: "It is trained to speak out responses"),
+                        flexCardGpt(
+                            icon: Icons.warning_amber_rounded,
+                            color: Colors.red.shade400,
+                            text:
+                                "Limited knowledge of world after 2021.\n May produce harmful instructions or biased content"),
+                      ],
+                    ))
+                  : _buildList(),
             ),
             Visibility(
               visible: isLoading,
@@ -148,9 +173,12 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                 );
               });
+              TextToSpeech.textToSpeech(value);
+              Future.delayed(const Duration(milliseconds: 200))
+                  .then((_) => _scrollDown());
             });
             _textController.clear();
-            Future.delayed(const Duration(milliseconds: 50))
+            Future.delayed(const Duration(milliseconds: 200))
                 .then((_) => _scrollDown());
           } else {
             Get.snackbar("Error", "Please enter a message");
@@ -166,6 +194,43 @@ class _ChatPageState extends State<ChatPage> {
         textCapitalization: TextCapitalization.sentences,
         style: const TextStyle(color: Colors.white),
         controller: _textController,
+        onSubmitted: (str) {
+          if (str != "") {
+            setState(
+              () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                _messages.add(
+                  ChatMessage(
+                    text: _textController.text,
+                    chatMessageType: ChatMessageType.user,
+                  ),
+                );
+                isLoading = true;
+              },
+            );
+            var input = _textController.text;
+            _textController.clear();
+            Future.delayed(const Duration(milliseconds: 50))
+                .then((_) => _scrollDown());
+            generateResponse(input).then((value) {
+              setState(() {
+                isLoading = false;
+                _messages.add(
+                  ChatMessage(
+                    text: value,
+                    chatMessageType: ChatMessageType.bot,
+                  ),
+                );
+              });
+              TextToSpeech.textToSpeech(value);
+              Future.delayed(const Duration(milliseconds: 200))
+                  .then((_) => _scrollDown());
+            });
+            _textController.clear();
+          } else {
+            Get.snackbar("Error", "Please enter a message");
+          }
+        },
         decoration: const InputDecoration(
           fillColor: botBackgroundColor,
           filled: true,
@@ -188,6 +253,7 @@ class _ChatPageState extends State<ChatPage> {
         return ChatMessageWidget(
           text: message.text,
           chatMessageType: message.chatMessageType,
+          scrollController: _scrollController,
         );
       },
     );
@@ -202,12 +268,57 @@ class _ChatPageState extends State<ChatPage> {
   }
 }
 
+class flexCardGpt extends StatelessWidget {
+  const flexCardGpt({
+    Key? key,
+    this.icon,
+    this.color,
+    this.text,
+  }) : super(key: key);
+  final icon;
+  final color;
+  final text;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(
+          child: Icon(
+            icon,
+            size: 50,
+            color: color,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(
+              vertical: 8, horizontal: 100.w < 800 ? 14.w : 2.w),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+        SizedBox(
+          height: 10.w,
+        )
+      ],
+    );
+  }
+}
+
 class ChatMessageWidget extends StatelessWidget {
-  const ChatMessageWidget(
-      {super.key, required this.text, required this.chatMessageType});
+  const ChatMessageWidget({
+    super.key,
+    required this.text,
+    required this.chatMessageType,
+    required this.scrollController,
+  });
 
   final String text;
   final ChatMessageType chatMessageType;
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -249,13 +360,44 @@ class ChatMessageWidget extends StatelessWidget {
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   ),
-                  child: Text(
-                    text,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(color: Colors.white),
-                  ),
+                  child: chatMessageType == ChatMessageType.bot &&
+                          text == _messages.last.text
+                      ? AnimatedTextKit(
+                          animatedTexts: [
+                            TypewriterAnimatedText(
+                              text,
+                              textStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(color: Colors.white),
+                              speed: const Duration(milliseconds: 30),
+                            ),
+                          ],
+                          onFinished: () {
+                            scrollController.animateTo(
+                              scrollController.position.maxScrollExtent,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOut,
+                            );
+                          },
+                          onTap: () async {
+                            TextToSpeech.stopSpeech();
+                            scrollController.animateTo(
+                              scrollController.position.maxScrollExtent,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOut,
+                            );
+                          },
+                          isRepeatingAnimation: false,
+                          displayFullTextOnTap: true,
+                        )
+                      : Text(
+                          text,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(color: Colors.white),
+                        ),
                 ),
               ],
             ),
@@ -268,7 +410,8 @@ class ChatMessageWidget extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 enableFeedback: true,
-                hoverColor: Colors.teal.shade100,
+                hoverColor: Colors.teal.shade200,
+                splashColor: Colors.teal.shade100.withOpacity(0.4),
                 borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: text));

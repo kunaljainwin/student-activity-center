@@ -235,7 +235,9 @@ class EventDetails extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Text(event['announcement']),
           ),
-
+          SizedBox(
+            height: 20,
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.w),
             child: Text(

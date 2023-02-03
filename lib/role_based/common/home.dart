@@ -67,7 +67,6 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     Level.computeLevel(userSnapshot["attendance"]);
-    // FirebaseMessaging Toker resetting when  new login is performred
 
     // Server send message Processing on app operm
     FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
@@ -335,89 +334,94 @@ class _MyHomePageState extends State<MyHomePage>
                   ))
             ],
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 6.w),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color.fromRGBO(255, 255, 255, 1),
-                border: Border.all(color: Colors.blueGrey.shade400),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ListTile(
-                onTap: () => Get.to(() => AchievementsPage(
-                      level: Level.level,
-                      userData: userSnapshot,
-                    )),
-                leading: GestureDetector(
-                  onTap: () {
-                    _controller.isAnimating
-                        ? _controller.stop()
-                        : _controller.repeat();
-                  },
-                  child: AnimatedBuilder(
-                    animation: _controller,
-                    builder: (context, child) => Transform.rotate(
-                      angle: _controller.value * 2 * math.pi,
-                      child: QrImage(
-                          padding: const EdgeInsets.all(3), data: userEmail),
-                    ),
-                  ),
+          Container(
+            color: Colors.white,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 6.w),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(255, 255, 255, 1),
+                  border: Border.all(color: Colors.blueGrey.shade400),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                title: Text(
-                  "Level ${Level.level.toString()}",
-                  textScaleFactor: 1.1,
-                ),
-                trailing: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.arrow_forward_ios,
-                    )),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      child: LinearProgressIndicator(
-                        value: (totalVisits - Level.before) / Level.after,
-                        backgroundColor: Colors.blueGrey.shade400,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                            Colors.orangeAccent),
+                child: ListTile(
+                  onTap: () => Get.to(() => AchievementsPage(
+                        level: Level.level,
+                        userData: userSnapshot,
+                      )),
+                  leading: GestureDetector(
+                    onTap: () {
+                      _controller.isAnimating
+                          ? _controller.stop()
+                          : _controller.repeat();
+                    },
+                    child: AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, child) => Transform.rotate(
+                        angle: _controller.value * 2 * math.pi,
+                        child: QrImage(
+                            padding: const EdgeInsets.all(3), data: userEmail),
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        // Text(
-                        //   "${totalVisits - Level.before}/${Level.after} points",
-                        //   softWrap: true,
-                        //   overflow: TextOverflow.clip,
-                        // ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 3),
-                            decoration: BoxDecoration(
-                                color:
-                                    Colors.deepOrange.shade800.withOpacity(0.7),
-                                borderRadius: BorderRadius.circular(16)),
-                            child: Text(
-                              "${Level.after - totalVisits + Level.before} more to Level up",
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 12.5),
+                  ),
+                  title: Text(
+                    "Level ${Level.level.toString()}",
+                    textScaleFactor: 1.1,
+                  ),
+                  trailing: IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.arrow_forward_ios,
+                      )),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        child: LinearProgressIndicator(
+                          value: (totalVisits - Level.before) / Level.after,
+                          backgroundColor: Colors.blueGrey.shade400,
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              Colors.orangeAccent),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          // Text(
+                          //   "${totalVisits - Level.before}/${Level.after} points",
+                          //   softWrap: true,
+                          //   overflow: TextOverflow.clip,
+                          // ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 3),
+                              decoration: BoxDecoration(
+                                  color: Colors.deepOrange.shade800
+                                      .withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(16)),
+                              child: Text(
+                                "${Level.after - totalVisits + Level.before} more to Level up",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.5),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  ],
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
           isLearnMoreVisible
               ? Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
                           begin: Alignment.topCenter,
@@ -425,7 +429,6 @@ class _MyHomePageState extends State<MyHomePage>
                           colors: [Colors.white, Colors.grey.shade50])),
                   child: ListTile(
                     enableFeedback: true,
-                    onTap: () => learnMore(),
                     leading: const Heading(),
                   ),
                 )
@@ -483,12 +486,14 @@ class Heading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
-      "Learn how to use the app",
-      textAlign: TextAlign.center,
-      textScaleFactor: 1.05,
-      style:
-          TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+    return TextButton(
+      child: const Text(
+        "Learn how to use the app",
+        textAlign: TextAlign.center,
+        textScaleFactor: 1.1,
+        style: TextStyle(color: Colors.blue),
+      ),
+      onPressed: () => learnMore(),
     );
   }
 }

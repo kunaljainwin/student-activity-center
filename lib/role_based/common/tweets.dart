@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:samadhyan/keys.dart';
 //In total, you may not distribute more than 1,500,000 Tweet IDs to any entity
 //(inclusive of multiple individuals associated with a single entity)
 //within any 30 day period unless you have received written permission from Twitter.
@@ -24,13 +25,15 @@ class _TweetsPageState extends State<TweetsPage> {
   }
 
   _fetchTweets() async {
+    const token = twitterApiBearerToken;
     var response = await http.get(
         Uri.parse(
             'https://api.twitter.com/2/tweets/search/recent?query=rtu kota'),
         headers: {
-          "Authorization":
-              "Bearer AAAAAAAAAAAAAAAAAAAAAExLlQEAAAAAVv0751dcnaYrBHzbvZ5oRKWIHGA%3Dvzsou6D0eV3bTGFDmPEcJeMB0jhulznxWygZpuRBqE70RHEHkc",
-          "content-type": "application/json"
+          "Authorization": "Bearer $token",
+          // "Content-type": "application/json",
+          "mode": 'cors',
+          // "credentials": 'include'
         });
 
     var data = jsonDecode(response.body);
@@ -45,24 +48,28 @@ class _TweetsPageState extends State<TweetsPage> {
       appBar: AppBar(
         title: Text('Tweets with #rtu'),
       ),
-      body: ListView.builder(
-        itemCount: tweets.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              child: Column(
-                children: <Widget>[
-                  ListTile(
-                    leading: Icon(Icons.tag_rounded),
-                    title: Text(tweets[index]['text']),
+      body: tweets.isEmpty
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView.builder(
+              itemCount: tweets.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    child: Column(
+                      children: <Widget>[
+                        ListTile(
+                          leading: Icon(Icons.tag_rounded),
+                          title: Text(tweets[index]['text']),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

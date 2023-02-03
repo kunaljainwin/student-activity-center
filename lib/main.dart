@@ -8,8 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:samadhyan/role_based/common/getx_trial.dart';
+import 'package:samadhyan/keys.dart';
 import 'package:samadhyan/utilities/themes.dart';
 import 'package:samadhyan/widgets/login_helpers.dart';
 import 'package:samadhyan/constants.dart';
@@ -34,36 +33,59 @@ Future<void> initializeApp() async {
   await Firebase.initializeApp(
       options: kIsWeb
           ? const FirebaseOptions(
-              apiKey: "AIzaSyAWT3g73HTwiePpKXDywTs3z4_--2_C0zU",
-              authDomain: "visitcounter-fef16.firebaseapp.com",
-              databaseURL:
-                  "https://visitcounter-fef16-default-rtdb.firebaseio.com",
-              projectId: "visitcounter-fef16",
-              storageBucket: "visitcounter-fef16.appspot.com",
-              messagingSenderId: "684329885216",
-              appId: "1:684329885216:web:fe77d493c10d3eaa032645",
-              measurementId: "G-WNB3QKWVJ2")
+              apiKey: apiKey,
+              authDomain: authDomain,
+              databaseURL: databaseURL,
+              projectId: projectId,
+              storageBucket: storageBucket,
+              messagingSenderId: messagingSenderId,
+              appId: appId,
+              measurementId: measurementId)
           : null);
 
   FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.instance;
-  firebaseAppCheck.activate(
-      webRecaptchaSiteKey: "AC7B8005-1374-459D-90E2-50BA207FB3BC",
+  await firebaseAppCheck.activate(
+      webRecaptchaSiteKey: webReCaptchaAppcheckSiteKey,
       androidDebugProvider: devMode);
+
+  await FirebaseMessaging.instance
+      .requestPermission(
+    alert: true,
+    announcement: true,
+    badge: true,
+    carPlay: true,
+    criticalAlert: true,
+    provisional: true,
+    sound: true,
+  )
+      .then((value) async {
+    if (value.authorizationStatus == AuthorizationStatus.authorized) {
+      debugPrint("Permission Granted");
+      await FirebaseMessaging.instance
+          .getToken(vapidKey: vapidKey)
+          .then((value) {
+        // FirebaseMessaging Token resetting when  new login is performred
+        userNewFCMToken = value!;
+        devMode ? debugPrint(userNewFCMToken) : null;
+      });
+      FirebaseMessaging.onBackgroundMessage(_messageHandler);
+    } else if (value.authorizationStatus == AuthorizationStatus.provisional) {
+      debugPrint("Permission Provisional");
+    } else if (value.authorizationStatus == AuthorizationStatus.denied) {
+      debugPrint("Permission Denied");
+      // FirebaseMessaging.instance.requestPermission();
+    } else {
+      debugPrint("Permission Unknown");
+    }
+  });
 
   if (kIsWeb) {
   } else {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    FirebaseMessaging.onBackgroundMessage(_messageHandler);
+
     // Processing of Push Notifications
-    await FirebaseMessaging.instance
-        .getToken(
-            vapidKey:
-                "BG96yCS6v9LQolA5ycT0sZ6fiYvgnbC2uOV2C03OM9u7Cs49utdTrSytEUV_F81cMeF_t1C0fOt7pfgdF7yoOqk")
-        .then((value) {
-      userNewFCMToken = value!;
-      debugPrint(userNewFCMToken);
-    });
+
     // await MongoDB.connect();
 
     // await RemoteConfigService().initialize();
@@ -95,9 +117,8 @@ Future<void> initializeApp() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
-  // final GetTrial getTrial = Get.put(GetTrial());
-// This widget is the root of your application.
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Sizer(builder:

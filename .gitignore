@@ -10,6 +10,7 @@ flutter_native_splash
 #For Backend Only
 /.firebase
 .firebaserc
+lib/keys.dart
 
 *.json
 
