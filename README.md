@@ -127,7 +127,7 @@ Add notes about how to use the system. -->
      </tr>
   <tr>
     <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ydeiix5dzo5tj9y86hqq.png" ></td>
-    <td><img src="\https://user-images.githubusercontent.com/72144717/221110218-d90460bb-ca42-4d73-9ce9-c9d8dd795fa9.jpeg" ></td>
+    <td><img src="https://user-images.githubusercontent.com/72144717/221110218-d90460bb-ca42-4d73-9ce9-c9d8dd795fa9.jpeg" ></td>
   
 
   </tr>
