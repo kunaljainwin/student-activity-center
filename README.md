@@ -126,9 +126,9 @@ Add notes about how to use the system. -->
      <td>  Drawer for Panels</td>
      </tr>
   <tr>
-    <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ydeiix5dzo5tj9y86hqq.png" ></td>
+    <td><img src="https://user-images.githubusercontent.com/72144717/221110656-251b12bd-38d5-4a1e-b5ff-85bef56789b8.jpeg" ></td>
     <td><img src="https://user-images.githubusercontent.com/72144717/221110218-d90460bb-ca42-4d73-9ce9-c9d8dd795fa9.jpeg" ></td>
-  
+
 
   </tr>
  </table>
