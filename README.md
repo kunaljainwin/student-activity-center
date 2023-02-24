@@ -137,8 +137,7 @@ Add notes about how to use the system. -->
      <td>  Registeration Screen</td>
      </tr>
   <tr>
-![](https://user-images.githubusercontent.com/72144717/221108801-47579930-eb50-42e1-8b95-e6919b16155b.jpeg)
-   
+    <td><img src="" ></td>
     <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/f0m1kvzxuka9baha419e.jpeg" ></td>
   
   </tr>
