@@ -127,8 +127,9 @@ Add notes about how to use the system. -->
      </tr>
   <tr>
     <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ydeiix5dzo5tj9y86hqq.png" ></td>
-    <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/xqg4qdidbv3sljfb057b.png" ></td>
+    <td><img src="\https://user-images.githubusercontent.com/72144717/221110218-d90460bb-ca42-4d73-9ce9-c9d8dd795fa9.jpeg" ></td>
   
+
   </tr>
  </table>
 <table>
@@ -137,7 +138,7 @@ Add notes about how to use the system. -->
      <td>  Registeration Screen</td>
      </tr>
   <tr>
-    <td>![WhatsApp Image 2023-02-24 at 11 56 48 AM](https://user-images.githubusercontent.com/72144717/221109494-15ddd9ac-84b9-4b79-9e73-d16c7c5303db.jpeg)
+    <td><img src="https://user-images.githubusercontent.com/72144717/221109494-15ddd9ac-84b9-4b79-9e73-d16c7c5303db.jpeg">
 </td>
     <td><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/f0m1kvzxuka9baha419e.jpeg" ></td>
   
